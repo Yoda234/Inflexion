@@ -17,6 +17,11 @@ const server_selection_button = document.getElementById('server_selection_button
 const user_text = document.getElementById('user_text')
 const loggerLanding = LoggerUtil.getLogger('Landing')
 
+// --- FONCTION ESSENTIELLE POUR EVITER LE CRASH UICORE ---
+function initNews() {
+    console.log("News initialisées (Mode Custom HUD).");
+}
+
 function toggleLaunchArea(loading){
     if(loading){
         launch_details.style.display = 'flex'
@@ -31,9 +36,19 @@ function setLaunchPercentage(percent){ launch_progress.setAttribute('max', 100);
 function setDownloadPercentage(percent){ remote.getCurrentWindow().setProgressBar(percent/100); setLaunchPercentage(percent) }
 function setLaunchEnabled(val){ document.getElementById('launch_button').disabled = !val }
 
+// --- LOGIQUE BOUTON JOUER ---
 document.getElementById('launch_button').addEventListener('click', async e => {
+    // Animation
+    const launchBtn = document.getElementById('launch_button')
+    launchBtn.classList.add('is-launching')
+    if (!launchBtn.getAttribute('data-original-text')) {
+        launchBtn.setAttribute('data-original-text', launchBtn.innerHTML)
+    }
+    launchBtn.innerHTML = '<span>LANCEMENT...</span>'
+
     loggerLanding.info('Launching game..')
-    // SECURITY
+    
+    // Vérification des Mods
     try {
         const serverId = ConfigManager.getSelectedServer()
         const distribution = await DistroAPI.getDistribution()
@@ -61,7 +76,7 @@ document.getElementById('launch_button').addEventListener('click', async e => {
         }
     } catch (err) { console.error("Erreur verif mods:", err) }
 
-    // LAUNCH
+    // Lancement
     try {
         const server = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())
         const jExe = ConfigManager.getJavaExecutable(ConfigManager.getSelectedServer())
@@ -78,8 +93,18 @@ document.getElementById('launch_button').addEventListener('click', async e => {
     }
 })
 
-document.getElementById('settingsMediaButton').onclick = async e => { await prepareSettings(); switchView(getCurrentView(), VIEWS.settings) }
-document.getElementById('avatarOverlay').onclick = async e => { await prepareSettings(); switchView(getCurrentView(), VIEWS.settings, 500, 500, () => { settingsNavItemListener(document.getElementById('settingsNavAccount'), false) }) }
+// --- BOUTON PARAMÈTRES (CORRECTIF) ---
+// On vérifie si le bouton existe avant d'ajouter l'événement pour éviter le crash
+const settingsBtn = document.getElementById('settingsMediaButton');
+if(settingsBtn) {
+    settingsBtn.onclick = async e => { 
+        await prepareSettings(); 
+        switchView(getCurrentView(), VIEWS.settings); 
+    }
+}
+
+// --- BOUTON AVATAR (SUPPRIMÉ) ---
+// J'ai supprimé la ligne qui causait le crash (avatarOverlay.onclick) car le bouton n'existe plus.
 
 function updateSelectedAccount(authUser){
     let username = Lang.queryJS('landing.selectedAccount.noAccountSelected')
@@ -95,12 +120,17 @@ function updateSelectedServer(serv){
     if(getCurrentView() === VIEWS.settings) fullSettingsSave()
     ConfigManager.setSelectedServer(serv != null ? serv.rawServer.id : null)
     ConfigManager.save()
-    server_selection_button.innerHTML = '&#8226; ' + (serv != null ? serv.rawServer.name : Lang.queryJS('landing.noSelection'))
+    // Mise à jour simplifiée pour le nouveau design
+    server_selection_button.innerHTML = (serv != null ? serv.rawServer.name : Lang.queryJS('landing.noSelection'))
     if(getCurrentView() === VIEWS.settings) animateSettingsTabRefresh()
     setLaunchEnabled(serv != null)
 }
-server_selection_button.innerHTML = '&#8226; ' + Lang.queryJS('landing.selectedServer.loading')
-server_selection_button.onclick = async e => { e.target.blur(); await toggleServerSelection(true) }
+
+// Initialisation bouton serveur
+if(server_selection_button) {
+    server_selection_button.innerHTML = Lang.queryJS('landing.selectedServer.loading')
+    server_selection_button.onclick = async e => { e.target.blur(); await toggleServerSelection(true) }
+}
 
 const refreshMojangStatuses = async function(){ }
 const refreshServerStatus = async (fade = false) => {
@@ -112,21 +142,39 @@ const refreshServerStatus = async (fade = false) => {
         pLabel = Lang.queryJS('landing.serverStatus.players')
         pVal = servStat.players.online + '/' + servStat.players.max
     } catch (err) {}
-    if(fade){
-        $('#server_status_wrapper').fadeOut(250, () => {
-            document.getElementById('landingPlayerLabel').innerHTML = pLabel
-            document.getElementById('player_count').innerHTML = pVal
-            $('#server_status_wrapper').fadeIn(500)
+    
+    const statusWrapper = $('#server_status_wrapper')
+    if(fade && statusWrapper.length){
+        statusWrapper.fadeOut(250, () => {
+            const labelEl = document.getElementById('landingPlayerLabel')
+            const countEl = document.getElementById('player_count')
+            if(labelEl) labelEl.innerHTML = pLabel
+            if(countEl) countEl.innerHTML = pVal
+            statusWrapper.fadeIn(500)
         })
     } else {
-        document.getElementById('landingPlayerLabel').innerHTML = pLabel
-        document.getElementById('player_count').innerHTML = pVal
+        const labelEl = document.getElementById('landingPlayerLabel')
+        const countEl = document.getElementById('player_count')
+        if(labelEl) labelEl.innerHTML = pLabel
+        if(countEl) countEl.innerHTML = pVal
     }
 }
 refreshMojangStatuses()
 let serverStatusListener = setInterval(() => refreshServerStatus(true), 300000)
 
-function showLaunchFailure(title, desc){ setOverlayContent(title, desc, Lang.queryJS('landing.launch.okay')); setOverlayHandler(null); toggleOverlay(true); toggleLaunchArea(false) }
+function showLaunchFailure(title, desc){ 
+    const launchBtn = document.getElementById('launch_button')
+    if(launchBtn) {
+        launchBtn.classList.remove('is-launching')
+        if (launchBtn.getAttribute('data-original-text')) {
+            launchBtn.innerHTML = launchBtn.getAttribute('data-original-text')
+        }
+    }
+    setOverlayContent(title, desc, Lang.queryJS('landing.launch.okay')); 
+    setOverlayHandler(null); 
+    toggleOverlay(true); 
+    toggleLaunchArea(false) 
+}
 
 async function asyncSystemScan(effectiveJavaOptions, launchAfter = true){
     setLaunchDetails(Lang.queryJS('landing.systemScan.checking'))
@@ -271,6 +319,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const musicSVG = document.getElementById('musicSVG')
     const iconSoundOn = '<path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM3 9v6h4l5 5V4L7 9H3z"/>'
     const iconSoundOff = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>'
+    
+    // Ajout du volume
+    if(musicPlayer) {
+        musicPlayer.volume = 0.1;
+    }
+
     let isMuted = false
     if(musicBtn && musicPlayer) {
         musicBtn.addEventListener('click', () => {

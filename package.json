@@ -1,13 +1,7 @@
 {
-<<<<<<< Updated upstream
   "name": "invergencerp",
-  "version": "2.2.2",
+  "version": "2.2.4",
   "productName": "Invergence RP Network",
-=======
-  "name": "inflexion",
-  "version": "2.2.1",
-  "productName": "Inflexion Launcher",
->>>>>>> Stashed changes
   "description": "Modded Minecraft Launcher",
   "author": "Daniel Scalzi (https://github.com/dscalzi/) modifier par Inflexion",
   "license": "UNLICENSED",

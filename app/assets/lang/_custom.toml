@@ -1,7 +1,6 @@
 # Custom Language File for Launcher Customizer
 
 [ejs.app]
-<<<<<<< Updated upstream
 title = "Invergence RP Network"
 
 [ejs.landing]
@@ -9,15 +8,6 @@ mediaGitHubURL = ""
 mediaTwitterURL = "#"
 mediaInstagramURL = "#"
 mediaYouTubeURL = "#"
-=======
-title = "Inflexion RP"
-
-[ejs.landing]
-mediaGitHubURL = "https://github.com/Yoda234/Inflexion"
-mediaTwitterURL = "#"
-mediaInstagramURL = "#"
-mediaYouTubeURL = "https://discord.gg/ujHekxQDwZ"
->>>>>>> Stashed changes
 mediaDiscordURL = "https://discord.gg/ujHekxQDwZ"
 
 [ejs.settings]
@@ -25,12 +15,6 @@ sourceGithubLink = "https://github.com/Yoda234/Inflexion"
 supportLink = "https://github.com/Yoda234/Inflexion/issues"
 
 [ejs.welcome]
-<<<<<<< Updated upstream
 welcomeHeader = "Bienvenue sur Invergence RP NetWork"
 welcomeDescription = "Explore ici tous les mondes réunis sous le Invergence RP Network."
 welcomeDescCTA = "Vous êtes à seulement quelques clics d’entrer dans l’univers d’Invergence RP Network."
-=======
-welcomeHeader = "Bienvenue sur Inflexion RP"
-welcomeDescription = "Inflexion RP est un serveur Minecraft Roleplay inspiré du style du Labyrinthe !"
-welcomeDescCTA = "Vous n'êtes qu'à quelques clics d'Inflexion RP."
->>>>>>> Stashed changes
