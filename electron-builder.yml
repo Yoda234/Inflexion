@@ -1,5 +1,10 @@
-appId: 'helioslauncher'
-productName: 'Helios Launcher'
+<<<<<<< Updated upstream
+appId: 'invergencerpnetwork'
+productName: 'Invergence RP Network'
+=======
+appId: 'inflexionlauncher'
+productName: 'Inflexion Launcher'
+>>>>>>> Stashed changes
 artifactName: '${productName}-setup-${version}.${ext}'
 
 copyright: 'Copyright © 2018-2024 Daniel Scalzi'
