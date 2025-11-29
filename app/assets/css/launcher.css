@@ -1057,6 +1057,359 @@ input:checked + .toggleSwitchSlider:before { transform: translateX(22px); backgr
     letter-spacing: 2px;
     opacity: 0.7;
 }
+/* --- STYLES DES RANGS --- */
+#user_rank {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+
+/* Style Joueur (Gris/Blanc) */
+.rank-player {
+    color: #a1a1aa;
+}
+
+/* Style Admin (Rouge Néon) */
+.rank-admin {
+    color: #ef4444; /* Rouge vif */
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.6); /* Lueur rouge */
+}
+/* =============================================================================
+   MODS TAB - OPTIONAL MODS SELECTION (ACTIVE)
+   ============================================================================= */
+
+/* 1. VISIBILITÉ : On cache les Requis, On montre les Optionnels */
+#settingsReqModsContainer { display: none !important; }
+#settingsOptModsContainer { display: block !important; }
+#settingsDropinModsContainer { display: none !important; }
+
+/* 2. HEADER (Style Néon) */
+.settingsModsHeader { 
+    border-bottom: 2px solid var(--set-accent); /* Ligne Cyan */
+    padding-bottom: 10px; margin-bottom: 20px; 
+    font-size: 18px; color: var(--set-accent); 
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
+    font-weight: bold; text-transform: uppercase; letter-spacing: 2px;
+}
+
+/* 3. GRILLE DES MODS OPTIONNELS */
+#settingsOptModsContent {
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); /* 2 Colonnes */
+    gap: 15px; 
+    width: 100%;
+}
+
+/* Carte Mod Optionnel */
+.settingsOptionalMod {
+    background: rgba(30, 30, 35, 0.6); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 8px; 
+    padding: 15px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Effet Hover */
+.settingsOptionalMod:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* ÉTAT ACTIVÉ (ENABLED) */
+.settingsOptionalMod[enabled] {
+    background: rgba(0, 243, 255, 0.05);
+    border-color: var(--set-accent);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.1), inset 0 0 10px rgba(0, 243, 255, 0.05);
+}
+
+/* Infos du Mod (Gauche) */
+.optModInfo {
+    display: flex;
+    flex-direction: column;
+    max-width: 70%;
+    pointer-events: none; /* Le clic traverse pour activer le bouton */
+}
+
+.optModName {
+    font-weight: bold; color: white; font-size: 13px; 
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.optModDesc {
+    font-size: 11px; color: #a1a1aa;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Texte coloré quand activé */
+.settingsOptionalMod[enabled] .optModName { 
+    color: var(--set-accent); 
+    text-shadow: 0 0 5px var(--set-accent); 
+}
+
+/* Switch (Visuel uniquement, l'état est géré par la classe [enabled] de la carte) */
+.optModSwitch { pointer-events: none; }
+/*******************************************************************************
+ * INVERGENCE NETWORK TITLE - CINEMATIC STYLE
+ ******************************************************************************/
+
+/* Conteneur pour centrer et espacer */
+#serverTitleContainer {
+    margin-bottom: 40px; /* Espace entre le titre et le bouton JOUER */
+    text-align: center;
+    position: relative;
+    z-index: 5;
+    pointer-events: none; /* Laisse passer les clics si besoin */
+}
+
+/* Le Texte Principal */
+#invergenceTitle {
+    font-family: 'Rajdhani', 'Avenir Medium', sans-serif; /* Police Sci-Fi */
+    font-weight: 900; /* Ultra gras */
+    margin: 0;
+    line-height: 1;
+    
+    /* SCALING INTELLIGENT : Le texte grossit avec la fenêtre */
+    /* Minimum 40px, Idéal 7vw (7% de la largeur), Max 120px */
+    font-size: clamp(40px, 7vw, 120px);
+    
+    /* Dégradé de texte (Blanc -> Cyan -> Violet) */
+    background: linear-gradient(135deg, #ffffff 0%, #00f3ff 40%, #bc13fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* Ombre portée brillante (Glow) */
+    filter: drop-shadow(0 0 20px rgba(0, 243, 255, 0.4));
+    
+    /* État initial pour l'animation */
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+    letter-spacing: 10px; /* Très écarté au début */
+    
+    /* Lancement de l'animation */
+    animation: cinematicReveal 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    animation-delay: 0.5s; /* Attend un peu après l'ouverture du launcher */
+}
+
+/* Le mot "NETWORK" (Style différent optionnel) */
+.title-accent {
+    font-weight: 300; /* Plus fin */
+    color: white; /* Blanc pur */
+    /* On retire le dégradé juste pour ce mot si on veut du contraste, 
+       sinon retirer ces lignes pour garder le dégradé partout */
+    background: none;
+    -webkit-text-fill-color: white;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+/*******************************************************************************
+ * CORRECTIONS FINALES (TITRE ANIMÉ + RANGS)
+ ******************************************************************************/
+
+/* --- RANGS (Rank) --- */
+#user_rank {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+    display: block; /* Force le retour à la ligne */
+}
+
+/* Joueur Standard */
+.rank-player {
+    color: #a1a1aa; /* Gris clair */
+}
+
+/* Admin */
+.rank-admin {
+    color: #ef4444; /* Rouge */
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.8); /* Lueur Rouge */
+}
+
+/* --- TITRE : ANIMATION CONSTANTE (NEON BREATHE) --- */
+
+/* L'animation d'entrée (Déjà présente, on la garde) */
+@keyframes cinematicReveal {
+    0% { opacity: 0; transform: translateY(-40px) scale(0.95); letter-spacing: 15px; filter: blur(10px); }
+    100% { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 2px; filter: blur(0); }
+}
+
+/* NOUVELLE ANIMATION CONSTANTE (Respiration) */
+@keyframes neonBreathe {
+    0%, 100% {
+        text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        filter: brightness(1);
+    }
+    50% {
+        text-shadow: 0 0 40px rgba(0, 243, 255, 0.8), 0 0 10px white;
+        filter: brightness(1.2);
+    }
+}
+
+#invergenceTitle {
+    /* Style de base */
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 900;
+    font-size: clamp(40px, 7vw, 120px);
+    background: linear-gradient(135deg, #ffffff 0%, #00f3ff 40%, #bc13fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* Animation combinée : Entrée puis Respiration */
+    /* 1.5s d'entrée, puis l'animation 'neonBreathe' prend le relais après 2s */
+    animation: 
+        cinematicReveal 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+        neonBreathe 4s ease-in-out infinite 2s; /* Commence après 2s, dure 4s, boucle */
+}
+
+/* --- ANIMATION --- */
+@keyframes cinematicReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(-40px) scale(0.95);
+        letter-spacing: 15px; /* Lettres très écartées */
+        filter: blur(10px); /* Flou au début */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        letter-spacing: 2px; /* Lettres se resserrent */
+        filter: blur(0) drop-shadow(0 0 20px rgba(0, 243, 255, 0.5));
+    }
+}
+
+/* Ajustement de la colonne centrale pour accueillir le titre */
+.bottom-center-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Centré verticalement */
+    flex-grow: 1; /* Prend toute la place disponible au centre */
+    padding-bottom: 50px; /* Remonte un peu le tout */
+}
+/* =============================================================================
+   SHADERPACKS - CYBER DROPDOWN MENU
+   ============================================================================= */
+
+/* Cacher les anciens boutons */
+#settingsShaderpackButton { display: none !important; }
+
+/* Description */
+#settingsShaderpackDesc {
+    margin-bottom: 10px; color: #a1a1aa; font-size: 12px; font-style: italic;
+}
+
+/* Le Conteneur du Menu Déroulant */
+.cyber-dropdown {
+    position: relative;
+    width: 100%;
+    font-family: 'Avenir Medium', sans-serif;
+    z-index: 100; /* Pour passer au-dessus des autres éléments quand ouvert */
+}
+
+/* La partie visible (Bouton de sélection) */
+.cyber-dropdown-selected {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 12px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Effet Hover sur la sélection */
+.cyber-dropdown-selected:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--set-accent); /* Cyan */
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+}
+
+/* La flèche animée */
+.cyber-dropdown-arrow {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid var(--set-accent);
+    transition: transform 0.3s ease;
+}
+
+/* État OUVERT (Active) */
+.cyber-dropdown.active .cyber-dropdown-selected {
+    border-color: var(--set-accent);
+    background: #000;
+    border-bottom-left-radius: 0; /* On colle la liste en dessous */
+    border-bottom-right-radius: 0;
+}
+
+.cyber-dropdown.active .cyber-dropdown-arrow {
+    transform: rotate(180deg); /* La flèche tourne */
+}
+
+/* La Liste des Options (Cachée par défaut) */
+.cyber-dropdown-options {
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    background: #0a0a0a;
+    border: 1px solid var(--set-accent);
+    border-top: none;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    max-height: 0; /* Caché */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Quand ouvert, on agrandit la hauteur max */
+.cyber-dropdown.active .cyber-dropdown-options {
+    max-height: 250px; /* Hauteur max de la liste */
+    overflow-y: auto; /* Scroll si trop long */
+}
+
+/* Scrollbar de la liste */
+.cyber-dropdown-options::-webkit-scrollbar { width: 4px; }
+.cyber-dropdown-options::-webkit-scrollbar-thumb { background: var(--set-accent); }
+
+/* Une Option */
+.cyber-option {
+    padding: 12px 20px;
+    cursor: pointer;
+    color: #ccc;
+    transition: 0.2s;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.cyber-option:hover {
+    background: rgba(0, 243, 255, 0.1);
+    color: white;
+    padding-left: 25px; /* Petit décalage dynamique */
+}
+
+.cyber-option.selected {
+    color: var(--set-accent);
+    background: rgba(0, 243, 255, 0.05);
+    font-weight: bold;
+}
+
+/* Option OFF spécifique */
+.cyber-option[data-value="OFF"] {
+    color: #ff5555;
+}
 
 /* --- ANIMATIONS --- */
 

@@ -7,6 +7,12 @@ const { validateSelectedJvm, ensureJavaDirIsRoot, javaExecFromRoot, discoverBest
 const DiscordWrapper = require('./assets/js/discordwrapper')
 const ProcessBuilder = require('./assets/js/processbuilder')
 
+// --- CONFIGURATION ADMIN ---
+// Remplacez ces UUIDs par ceux de vos admins
+const ADMIN_UUIDS = [
+    "b87a8ce6a5f94ba682e2dce7b9927126"
+];
+
 // Elements
 const launch_content = document.getElementById('launch_content')
 const launch_details = document.getElementById('launch_details')
@@ -15,12 +21,10 @@ const launch_progress_label = document.getElementById('launch_progress_label')
 const launch_details_text = document.getElementById('launch_details_text')
 const server_selection_button = document.getElementById('server_selection_button')
 const user_text = document.getElementById('user_text')
+const user_rank = document.getElementById('user_rank')
 const loggerLanding = LoggerUtil.getLogger('Landing')
 
-// --- FONCTION ESSENTIELLE POUR EVITER LE CRASH UICORE ---
-function initNews() {
-    console.log("News initialisées (Mode Custom HUD).");
-}
+function initNews() { console.log("News initialisées."); }
 
 function toggleLaunchArea(loading){
     if(loading){
@@ -36,50 +40,79 @@ function setLaunchPercentage(percent){ launch_progress.setAttribute('max', 100);
 function setDownloadPercentage(percent){ remote.getCurrentWindow().setProgressBar(percent/100); setLaunchPercentage(percent) }
 function setLaunchEnabled(val){ document.getElementById('launch_button').disabled = !val }
 
-// --- LOGIQUE BOUTON JOUER ---
+// --- LOGIQUE DE SÉCURITÉ MODS ---
+async function enforceModPolicy(instanceDir, distribution) {
+    const fs = require('fs');
+    const path = require('path');
+    const loggerSec = LoggerUtil.getLogger('Security');
+    const selectedServer = distribution.getServerById(ConfigManager.getSelectedServer());
+    
+    const allowedFiles = new Set();
+    for(const module of selectedServer.modules) {
+        if(module.rawModule.type === 'ForgeMod' || module.rawModule.type === 'FabricMod' || module.rawModule.type === 'LiteMod') {
+            if(module.rawModule.artifact && module.rawModule.artifact.path) {
+                const fileName = path.basename(module.rawModule.artifact.path);
+                allowedFiles.add(fileName);
+            }
+        }
+    }
+
+    const modsDir = path.join(instanceDir, 'mods');
+    if (!fs.existsSync(modsDir)) return;
+
+    const files = fs.readdirSync(modsDir);
+    files.forEach(file => {
+        if(!allowedFiles.has(file)) {
+            try {
+                fs.unlinkSync(path.join(modsDir, file));
+                loggerSec.warn(`Mod non autorisé supprimé : ${file}`);
+            } catch(err) {
+                loggerSec.error(`Impossible de supprimer le mod : ${file}`, err);
+            }
+        }
+    });
+}
+
+// --- BOUTON JOUER ---
 document.getElementById('launch_button').addEventListener('click', async e => {
-    // Animation
     const launchBtn = document.getElementById('launch_button')
+    
+    // Animation Activation
     launchBtn.classList.add('is-launching')
     if (!launchBtn.getAttribute('data-original-text')) {
         launchBtn.setAttribute('data-original-text', launchBtn.innerHTML)
     }
     launchBtn.innerHTML = '<span>LANCEMENT...</span>'
 
+    // --- TIMEOUT 30 SECONDES ---
+    // Si après 30s le jeu n'est pas lancé, on remet le bouton normal
+    setTimeout(() => {
+        launchBtn.classList.remove('is-launching')
+        if (launchBtn.getAttribute('data-original-text')) {
+            launchBtn.innerHTML = launchBtn.getAttribute('data-original-text')
+        } else {
+            launchBtn.innerHTML = 'JOUER'
+        }
+    }, 30000) // 30000ms = 30 secondes
+    // ---------------------------
+
     loggerLanding.info('Launching game..')
-    
-    // Vérification des Mods
+
     try {
         const serverId = ConfigManager.getSelectedServer()
         const distribution = await DistroAPI.getDistribution()
         const server = distribution.getServerById(serverId)
-        const userConfig = ConfigManager.getModConfiguration(serverId)
-        let hasOptionalModEnabled = false
-        for (const mdl of server.modules) {
-            const type = mdl.rawModule.type
-            if (['ForgeMod', 'LiteMod', 'LiteLoader', 'FabricMod'].includes(type)) {
-                if (!mdl.getRequired().value) {
-                    const modId = mdl.getVersionlessMavenIdentifier()
-                    let isEnabled = mdl.getRequired().def 
-                    if (userConfig && userConfig.mods && userConfig.mods[modId] !== undefined) {
-                        const savedState = userConfig.mods[modId]
-                        if (typeof savedState === 'boolean') isEnabled = savedState
-                        else if (typeof savedState === 'object') isEnabled = savedState.value
-                    }
-                    if (isEnabled) { hasOptionalModEnabled = true; break }
-                }
-            }
-        }
-        if (hasOptionalModEnabled) {
-            showLaunchFailure('Lancement Interdit', 'Vous avez activé des mods optionnels. Veuillez les désactiver dans les paramètres.')
-            return
-        }
-    } catch (err) { console.error("Erreur verif mods:", err) }
+        const account = ConfigManager.getSelectedAccount()
 
-    // Lancement
-    try {
-        const server = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())
-        const jExe = ConfigManager.getJavaExecutable(ConfigManager.getSelectedServer())
+        // Vérification Admin
+        const isAdmin = ADMIN_UUIDS.includes(account.uuid);
+        if (!isAdmin) {
+            const path = require('path');
+            const instanceDir = path.join(ConfigManager.getInstanceDirectory(), server.rawServer.id);
+            await enforceModPolicy(instanceDir, distribution);
+        }
+
+        const jExe = ConfigManager.getJavaExecutable(serverId)
         if(jExe == null){ await asyncSystemScan(server.effectiveJavaOptions) } else {
             setLaunchDetails(Lang.queryJS('landing.launch.pleaseWait'))
             toggleLaunchArea(true)
@@ -93,8 +126,7 @@ document.getElementById('launch_button').addEventListener('click', async e => {
     }
 })
 
-// --- BOUTON PARAMÈTRES (CORRECTIF) ---
-// On vérifie si le bouton existe avant d'ajouter l'événement pour éviter le crash
+// Boutons Navigation
 const settingsBtn = document.getElementById('settingsMediaButton');
 if(settingsBtn) {
     settingsBtn.onclick = async e => { 
@@ -103,14 +135,28 @@ if(settingsBtn) {
     }
 }
 
-// --- BOUTON AVATAR (SUPPRIMÉ) ---
-// J'ai supprimé la ligne qui causait le crash (avatarOverlay.onclick) car le bouton n'existe plus.
-
+// Mise à jour du compte et du RANG
 function updateSelectedAccount(authUser){
     let username = Lang.queryJS('landing.selectedAccount.noAccountSelected')
+    
+    if(user_rank) {
+        user_rank.className = '';
+        user_rank.innerHTML = '';
+    }
+
     if(authUser != null){
         if(authUser.displayName != null) username = authUser.displayName
         if(authUser.uuid != null) document.getElementById('avatarContainer').style.backgroundImage = `url('https://mc-heads.net/body/${authUser.uuid}/right')`
+        
+        if(user_rank) {
+            if (ADMIN_UUIDS.includes(authUser.uuid)) {
+                user_rank.innerHTML = "RANK : ADMIN";
+                user_rank.classList.add('rank-admin');
+            } else {
+                user_rank.innerHTML = "RANK : JOUEUR";
+                user_rank.classList.add('rank-player');
+            }
+        }
     }
     user_text.innerHTML = username
 }
@@ -120,13 +166,11 @@ function updateSelectedServer(serv){
     if(getCurrentView() === VIEWS.settings) fullSettingsSave()
     ConfigManager.setSelectedServer(serv != null ? serv.rawServer.id : null)
     ConfigManager.save()
-    // Mise à jour simplifiée pour le nouveau design
     server_selection_button.innerHTML = (serv != null ? serv.rawServer.name : Lang.queryJS('landing.noSelection'))
     if(getCurrentView() === VIEWS.settings) animateSettingsTabRefresh()
     setLaunchEnabled(serv != null)
 }
 
-// Initialisation bouton serveur
 if(server_selection_button) {
     server_selection_button.innerHTML = Lang.queryJS('landing.selectedServer.loading')
     server_selection_button.onclick = async e => { e.target.blur(); await toggleServerSelection(true) }
@@ -316,20 +360,28 @@ async function dlAsync(login = true) {
 document.addEventListener('DOMContentLoaded', () => {
     const musicBtn = document.getElementById('musicButton')
     const musicPlayer = document.getElementById('launcherMusic')
-    const musicSVG = document.getElementById('musicSVG')
-    const iconSoundOn = '<path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM3 9v6h4l5 5V4L7 9H3z"/>'
-    const iconSoundOff = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>'
+    const musicSVG = document.querySelector('#musicButton .mediaSVG')
+    const iconSoundOn = '<path fill="currentColor" d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM3 9v6h4l5 5V4L7 9H3z"/>'
+    const iconSoundOff = '<path fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>'
     
-    // Ajout du volume
     if(musicPlayer) {
-        musicPlayer.volume = 0.1;
+        musicPlayer.volume = 1;
     }
 
     let isMuted = false
     if(musicBtn && musicPlayer) {
         musicBtn.addEventListener('click', () => {
-            if (isMuted) { musicPlayer.muted = false; musicSVG.innerHTML = iconSoundOn; musicSVG.style.fill = "#ffffff"; isMuted = false } 
-            else { musicPlayer.muted = true; musicSVG.innerHTML = iconSoundOff; musicSVG.style.fill = "#ef4444"; isMuted = true }
+            if (isMuted) { 
+                musicPlayer.muted = false; 
+                musicSVG.innerHTML = iconSoundOn; 
+                musicSVG.style.fill = "white"; 
+                isMuted = false 
+            } else { 
+                musicPlayer.muted = true; 
+                musicSVG.innerHTML = iconSoundOff; 
+                musicSVG.style.fill = "#ef4444"; 
+                isMuted = true 
+            }
         })
     }
 })

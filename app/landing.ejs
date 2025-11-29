@@ -3,9 +3,11 @@
     <div id="landingHeroTop">
         
         <div id="user_content" class="glass-pill">
-            <div id="avatarContainer"></div> <div class="user-info">
+            <div id="avatarContainer"></div>
+            <div class="user-info">
                 <span class="user-label">COMPTE</span>
                 <span id="user_text"><%- lang('landing.usernamePlaceholder') %></span>
+                <span id="user_rank" class="rank-player">CHARGEMENT...</span>
             </div>
         </div>
 
@@ -15,9 +17,7 @@
                     <path fill="currentColor" d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM3 9v6h4l5 5V4L7 9H3z"/>
                 </svg>
             </button>
-            
             <div class="media-divider"></div>
-            
             <div id="settingsMediaContainer">
                 <button class="mediaButton" id="settingsMediaButton" title="Paramètres">
                     <svg class="mediaSVG" viewBox="0 0 24 24">
@@ -43,6 +43,11 @@
         </div>
 
         <div class="bottom-center-col">
+            
+            <div id="serverTitleContainer">
+                <h1 id="invergenceTitle">INVERGENCE <span class="title-accent">NETWORK</span></h1>
+            </div>
+
             <div class="launch-wrapper">
                 <div id="launch_content">
                     <button id="launch_button">JOUER</button>

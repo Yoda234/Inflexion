@@ -152,18 +152,19 @@
                         
                     </div>
                 </div>
-                <div id="settingsShadersContainer">
-                    <div class="settingsModsHeader"><%- lang('settings.shaderpacks') %></div>
-                    <div id="settingsShaderpackDesc"><%- lang('settings.shaderpackDesc') %></div>
-                    <div id="settingsShaderpackWrapper">
-                        <button id="settingsShaderpackButton"> + </button>
-                        <div class="settingsSelectContainer">
-                            <div class="settingsSelectSelected" id="settingsShadersSelected"><%- lang('settings.selectShaderpack') %></div>
-                            <div class="settingsSelectOptions" id="settingsShadersOptions" hidden>
-
+                    <div id="settingsShadersContainer">
+                        <div class="settingsModsHeader"><%- lang('settings.shaderpacks') %></div>
+                        <div id="settingsShaderpackDesc"><%- lang('settings.shaderpackDesc') %></div>
+                        
+                        <div class="cyber-dropdown" id="shaderSelector">
+                            <div class="cyber-dropdown-selected" onclick="toggleShaderDropdown()">
+                                <span id="shaderSelectedName">Chargement...</span>
+                                <div class="cyber-dropdown-arrow"></div>
                             </div>
+                            
+                            <div class="cyber-dropdown-options" id="shaderOptionsList">
+                                </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>

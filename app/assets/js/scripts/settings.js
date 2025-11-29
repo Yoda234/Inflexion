@@ -1,7 +1,6 @@
 // Requirements
 const os     = require('os')
 const semver = require('semver')
-
 const DropinModUtil  = require('./assets/js/dropinmodutil')
 const { MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR } = require('./assets/js/ipcconstants')
 
@@ -148,7 +147,6 @@ async function initSettingsValues(){
             }
         }
     }
-
 }
 
 function saveSettingsValues(){
@@ -528,57 +526,105 @@ document.getElementById('settingsGameHeight').addEventListener('keydown', (e) =>
 
 const settingsModsContainer = document.getElementById('settingsModsContainer')
 
+// --- GESTION DES MODS (MISE À JOUR) ---
+
 async function resolveModsForUI(){
     const serv = ConfigManager.getSelectedServer()
     const distro = await DistroAPI.getDistribution()
-    const servConf = ConfigManager.getModConfiguration(serv)
+    const servConf = ConfigManager.getModConfiguration(serverId = serv)
     const modStr = parseModulesForUI(distro.getServerById(serv).modules, false, servConf.mods)
+    
+    // On injecte le HTML (Requis est vide ou caché, Optionnels est rempli)
     document.getElementById('settingsReqModsContent').innerHTML = modStr.reqMods
-    // Optionnels supprimés : on ne remplit plus settingsOptModsContent
+    document.getElementById('settingsOptModsContent').innerHTML = modStr.optMods
+
+    // Ajout des événements de clic sur les nouveaux éléments optionnels
+    const optModsElements = document.getElementsByClassName('settingsOptionalMod')
+    for(let el of optModsElements) {
+        el.onclick = () => toggleOptionalMod(el)
+    }
 }
 
 function parseModulesForUI(mdls, submodules, servConf){
     let reqMods = ''
-    // Optionnels supprimés : variable optMods inutile
+    let optMods = ''
 
     for(const mdl of mdls){
-        if(mdl.rawModule.type === Type.ForgeMod || mdl.rawModule.type === Type.LiteMod || mdl.rawModule.type === Type.LiteLoader || mdl.rawModule.type === Type.FabricMod){
+        if(mdl.rawModule.type === 'ForgeMod' || mdl.rawModule.type === 'LiteMod' || mdl.rawModule.type === 'LiteLoader' || mdl.rawModule.type === 'FabricMod'){
+            
+            const modId = mdl.getVersionlessMavenIdentifier()
+            
             if(mdl.getRequired().value){
-                // MOD REQUIS (Génération DIV propre)
-                reqMods += `<div id="${mdl.getVersionlessMavenIdentifier()}" class="settingsBaseMod" enabled>
-                    <div class="settingsModContent">
-                        <div class="settingsModMainWrapper">
-                            <div class="settingsModStatus"></div>
-                            <div class="settingsModDetails">
-                                <span class="settingsModName">${mdl.rawModule.name}</span>
-                                <span class="settingsModVersion">v${mdl.mavenComponents.version}</span>
-                            </div>
+                // REQUIS (Généré mais caché par CSS)
+                // ... code requis standard si besoin ...
+            } else {
+                // OPTIONNEL (Génération avec Switch)
+                let isEnabled = servConf && servConf[modId] != null ? servConf[modId] : mdl.getRequired().def
+                if(typeof isEnabled === 'object') isEnabled = isEnabled.value
+
+                optMods += `<div class="settingsOptionalMod" id="${modId}" ${isEnabled ? 'enabled' : ''}>
+                    <div class="optModInfo">
+                        <span class="optModName">${mdl.rawModule.name}</span>
+                        <span class="optModDesc">${mdl.rawModule.description || 'Module Optionnel'}</span>
+                    </div>
+                    <div class="optModSwitch">
+                        <div class="toggleSwitch">
+                            <div class="toggleSwitchSlider" style="${isEnabled ? 'background-color: var(--set-accent); border-color: var(--set-accent);' : ''}"></div>
+                            <style>
+                                /* Petit hack inline pour simuler l'état checked du slider CSS sans input réel complexe */
+                                #${modId}[enabled] .toggleSwitchSlider::before { transform: translateX(22px); background-color: white; }
+                            </style>
                         </div>
-                        <div class="settingsModStatusBadge">REQUIS</div>
                     </div>
                 </div>`
             }
         }
     }
-    return { reqMods, optMods: '' }
+    return { reqMods, optMods }
 }
 
-function bindModsToggleSwitch(){
-    // Vide car plus de switch
+// Fonction pour activer/désactiver un mod optionnel au clic
+function toggleOptionalMod(element) {
+    const isEnabled = element.hasAttribute('enabled')
+    const slider = element.querySelector('.toggleSwitchSlider')
+    
+    if(isEnabled) {
+        element.removeAttribute('enabled')
+        // Mise à jour visuelle manuelle du switch (ou laisser le CSS le faire si refait proprement)
+        slider.style.backgroundColor = ''
+        slider.style.borderColor = ''
+    } else {
+        element.setAttribute('enabled', '')
+        slider.style.backgroundColor = 'var(--set-accent)'
+        slider.style.borderColor = 'var(--set-accent)'
+    }
+    saveModConfiguration()
 }
 
 function saveModConfiguration(){
-    // Plus de switch à sauvegarder
+    const serv = ConfigManager.getSelectedServer()
+    const modConf = ConfigManager.getModConfiguration(serv) || { mods: {} }
+    if(!modConf.mods) modConf.mods = {}
+
+    const optMods = document.getElementsByClassName('settingsOptionalMod')
+    for(let mod of optMods) {
+        modConf.mods[mod.id] = mod.hasAttribute('enabled')
+    }
+
+    ConfigManager.setModConfiguration(serv, modConf)
+}
+// Pas de toggle switch pour l'instant car mods optionnels cachés
+function bindModsToggleSwitch(){ }
+function saveModConfiguration(){
     const serv = ConfigManager.getSelectedServer()
     const modConf = ConfigManager.getModConfiguration(serv)
-    // On garde la config telle quelle (les requis restent requis)
     ConfigManager.setModConfiguration(serv, modConf)
 }
 
-// DROP-IN MODS : SUPPRIMÉS
 async function resolveDropinModsForUI(){ }
 
-// SHADERPACKS
+// --- GESTION DES SHADERS (DROPDOWN CYBER) ---
+
 let CACHE_SETTINGS_INSTANCE_DIR
 let CACHE_SHADERPACKS
 let CACHE_SELECTED_SHADERPACK
@@ -588,91 +634,88 @@ async function resolveShaderpacksForUI(){
     CACHE_SETTINGS_INSTANCE_DIR = path.join(ConfigManager.getInstanceDirectory(), serv.rawServer.id)
     CACHE_SHADERPACKS = DropinModUtil.scanForShaderpacks(CACHE_SETTINGS_INSTANCE_DIR)
     CACHE_SELECTED_SHADERPACK = DropinModUtil.getEnabledShaderpack(CACHE_SETTINGS_INSTANCE_DIR)
+    
     setShadersOptions(CACHE_SHADERPACKS, CACHE_SELECTED_SHADERPACK)
 }
 
+// Génère la liste
 function setShadersOptions(arr, selected){
-    const cont = document.getElementById('settingsShadersOptions')
-    cont.innerHTML = ''
-
-    // 1. Création de la carte "OFF" (Toujours en premier)
-    const offDiv = document.createElement('div')
-    offDiv.className = 'shaderPackItem'
-    offDiv.setAttribute('value', 'OFF')
-    if(selected === 'OFF') offDiv.setAttribute('selected', '')
+    const listContainer = document.getElementById('shaderOptionsList')
+    const selectedLabel = document.getElementById('shaderSelectedName')
     
-    offDiv.innerHTML = `
-        <span class="shaderPackName">DÉSACTIVÉ</span>
-        <div class="shaderPackCheck"></div>
-    `
-    offDiv.onclick = () => selectShaderPack(offDiv)
-    cont.appendChild(offDiv)
+    listContainer.innerHTML = ''
 
-    // 2. Création des cartes pour les autres shaders
-    for(let opt of arr) {
-        const d = document.createElement('div')
-        d.className = 'shaderPackItem'
-        d.setAttribute('value', opt.fullName)
-        if(opt.fullName === selected) {
-            d.setAttribute('selected', '')
-        }
+    // Fonction pour créer une option HTML
+    const createOption = (name, value) => {
+        const div = document.createElement('div')
+        div.className = 'cyber-option'
+        div.setAttribute('data-value', value)
+        div.innerText = name
         
-        d.innerHTML = `
-            <span class="shaderPackName">${opt.name}</span>
-            <div class="shaderPackCheck"></div>
-        `
-        d.onclick = () => selectShaderPack(d)
-        cont.appendChild(d)
-    }
-}
-
-// Nouvelle fonction utilitaire pour gérer le clic
-function selectShaderPack(el) {
-    // Retirer la sélection des autres
-    const siblings = document.getElementById('settingsShadersOptions').children
-    for(let sib of siblings){
-        sib.removeAttribute('selected')
-    }
-    // Sélectionner l'élément cliqué
-    el.setAttribute('selected', '')
-}
-
-// Mise à jour de la fonction de sauvegarde pour lire la grille
-function saveShaderpackSettings(){
-    let sel = 'OFF'
-    const options = document.getElementById('settingsShadersOptions').children
-    for(let opt of options){
-        if(opt.hasAttribute('selected')){
-            sel = opt.getAttribute('value')
+        if(value === selected) {
+            div.classList.add('selected')
+            selectedLabel.innerText = name // Met à jour le titre
         }
+
+        div.onclick = () => {
+            // Mise à jour visuelle
+            selectedLabel.innerText = name
+            document.querySelectorAll('.cyber-option').forEach(el => el.classList.remove('selected'))
+            div.classList.add('selected')
+            
+            // Fermer le menu et sauvegarder
+            toggleShaderDropdown()
+            saveShaderpackSettings()
+        }
+        return div
+    }
+
+    // 1. Ajouter OFF
+    listContainer.appendChild(createOption('DÉSACTIVÉ (OFF)', 'OFF'))
+
+    // 2. Ajouter les packs
+    arr.forEach(pack => {
+        listContainer.appendChild(createOption(pack.name, pack.fullName))
+    })
+    
+    // Si rien n'est sélectionné (cas rare), mettre OFF par défaut
+    if(!selected || selected === 'OFF'){
+        selectedLabel.innerText = 'DÉSACTIVÉ (OFF)'
+    }
+}
+
+// Ouvre/Ferme le menu (appelé par le onclick dans le HTML)
+function toggleShaderDropdown() {
+    const dropdown = document.getElementById('shaderSelector')
+    dropdown.classList.toggle('active')
+}
+
+// Fermer le menu si on clique ailleurs
+document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('shaderSelector')
+    if (dropdown && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('active')
+    }
+})
+
+// Sauvegarde
+function saveShaderpackSettings(){
+    const selectedOption = document.querySelector('.cyber-option.selected')
+    let sel = 'OFF'
+    if(selectedOption){
+        sel = selectedOption.getAttribute('data-value')
     }
     DropinModUtil.setEnabledShaderpack(CACHE_SETTINGS_INSTANCE_DIR, sel)
 }
 
-function bindShaderpackButton() {
-    const spBtn = document.getElementById('settingsShaderpackButton')
-    spBtn.onclick = () => {
-        const p = path.join(CACHE_SETTINGS_INSTANCE_DIR, 'shaderpacks')
-        DropinModUtil.validateDir(p)
-        shell.openPath(p)
-    }
-    spBtn.ondragenter = e => {
-        e.dataTransfer.dropEffect = 'move'
-        spBtn.setAttribute('drag', '')
-        e.preventDefault()
-    }
-    spBtn.ondragover = e => { e.preventDefault() }
-    spBtn.ondragleave = e => { spBtn.removeAttribute('drag') }
-    spBtn.ondrop = async e => {
-        spBtn.removeAttribute('drag')
-        e.preventDefault()
-        DropinModUtil.addShaderpacks(e.dataTransfer.files, CACHE_SETTINGS_INSTANCE_DIR)
-        saveShaderpackSettings()
-        await resolveShaderpacksForUI()
-    }
-}
+// Fonction vide pour compatibilité
+function bindShaderpackButton() {}
 
-async function loadSelectedServerOnModsTab(){ }
+async function loadSelectedServerOnModsTab(){
+    const serv = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())
+    const selServContent = document.getElementsByClassName('settingsSelServContent')[0]
+    selServContent.innerHTML = serv.rawServer.name
+}
 
 Array.from(document.getElementsByClassName('settingsSwitchServerButton')).forEach(el => {
     el.addEventListener('click', async e => {
@@ -697,7 +740,6 @@ function animateSettingsTabRefresh(){
 async function prepareModsTab(first){
     await resolveModsForUI()
     await resolveShaderpacksForUI()
-    bindShaderpackButton()
     await loadSelectedServerOnModsTab()
 }
 
@@ -825,12 +867,7 @@ function populateJavaReqDesc(server) {
 }
 
 function populateJvmOptsLink(server) {
-    const major = server.effectiveJavaOptions.suggestedMajor
-    settingsJvmOptsLink.innerHTML = Lang.queryJS('settings.java.availableOptions', { major: major })
-    if(major >= 12) settingsJvmOptsLink.href = `https://docs.oracle.com/en/java/javase/${major}/docs/specs/man/java.html#extra-options-for-java`
-    else if(major >= 11) settingsJvmOptsLink.href = 'https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE'
-    else if(major >= 9) settingsJvmOptsLink.href = `https://docs.oracle.com/javase/${major}/tools/java.htm`
-    else settingsJvmOptsLink.href = `https://docs.oracle.com/javase/${major}/docs/technotes/tools/${process.platform === 'win32' ? 'windows' : 'unix'}/java.html`
+    // Links are static or managed elsewhere, function kept for compatibility
 }
 
 function bindMinMaxRam(server) {
