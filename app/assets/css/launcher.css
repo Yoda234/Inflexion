@@ -1,6 +1,6 @@
-/* * HELIOS LAUNCHER - ULTIMATE PERFORMANCE THEME
- * Main: HUD Glassmorphism (Optimized)
- * Settings: Onyx Pro Cards (Neon Grid Mods)
+/* * HELIOS LAUNCHER - FINAL EDITION
+ * Main: HUD Glassmorphism (Bottom)
+ * Settings: Clean Pro Cards (Java/Launcher/About) + Neon Grid (Mods)
  * Overlay: Obsidian Grid
  */
 
@@ -15,15 +15,13 @@
 @font-face { font-family: 'Ringbearer'; src: url('../fonts/Ringbearer.ttf'); }
 
 :root {
-    /* Variables Optimisées */
-    --set-bg: rgba(5, 5, 5, 0.85); /* Plus opaque pour réduire le besoin de flou */
-    --set-sidebar: rgba(20, 20, 20, 0.6);
-    --set-input: rgba(40, 40, 40, 0.6);
+    --set-bg: rgba(0, 0, 0, 0.6);
+    --set-card-bg: rgba(30, 30, 35, 0.85); /* Fond des cartes plus sombre et lisible */
     --set-accent: #00f3ff;
+    --set-success: #10b981; /* Vert Pro (pas néon) */
+    --neon-green: #39ff14;  /* Uniquement pour les mods */
     --set-border: rgba(255, 255, 255, 0.1);
-    --set-text: #ffffff;
-    --set-text-muted: #a1a1aa;
-    --neon-green: #39ff14;
+    --text-muted: #a1a1aa;
 }
 
 body, html, div { margin: 0; padding: 0; }
@@ -37,14 +35,13 @@ p { -webkit-margin-before: 0em; -webkit-margin-after: 0em; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.5); }
 
 /*******************************************************************************
- * FRAME BAR (Transparent)
+ * FRAME BAR
  ******************************************************************************/
 
 #frameBar {
     position: relative; z-index: 6000; display: flex; flex-direction: column;
     transition: background-color 1s ease; -webkit-user-select: none;
     background: rgba(0, 0, 0, 0.4);
-    /* Pas de blur ici pour gagner des FPS */
 }
 #frameResizableTop { height: 2px; width: 100%; -webkit-app-region: no-drag; }
 #frameMain { display: flex; height: 20px; }
@@ -58,14 +55,13 @@ p { -webkit-margin-before: 0em; -webkit-margin-after: 0em; }
 #frameButton_close:hover { background: rgba(255, 53, 53, 0.8) !important; }
 
 /*******************************************************************************
- * LOGIN VIEW (Optimized)
+ * LOGIN VIEW
  ******************************************************************************/
 
 #loginContainer {
     position: relative; display: flex; justify-content: center; align-items: center;
     height: 100%; width: 100%; transition: filter 0.25s ease;
-    background: rgba(0, 0, 0, 0.7); /* Plus sombre */
-    backdrop-filter: blur(5px); /* Flou léger (Performance) */
+    background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
     z-index: 100;
 }
 
@@ -99,22 +95,22 @@ p { -webkit-margin-before: 0em; -webkit-margin-after: 0em; }
 #loginCancelButton { background: none; border: none; font-size: 20px; cursor: pointer; }
 
 /*******************************************************************************
- * SETTINGS VIEW (NEBULA GLASS & NEON MODS - OPTIMIZED)
+ * SETTINGS VIEW - NAVIGATION
  ******************************************************************************/
 
 #settingsContainer {
     position: relative; height: 100%; display: flex;
-    background-color: var(--set-bg); /* Fond sombre semi-transparent */
-    backdrop-filter: blur(5px); /* Flou RÉDUIT pour la performance */
+    background-color: var(--set-bg); /* Fond Transparent */
+    backdrop-filter: blur(10px);
     font-family: 'Avenir Book', sans-serif;
     z-index: 200;
     color: white;
-    transform: translate3d(0,0,0); /* Force l'accélération GPU */
+    transform: translate3d(0,0,0);
 }
 
-/* --- SIDEBAR --- */
+/* Sidebar */
 #settingsContainerLeft {
-    width: 260px; background: rgba(0, 0, 0, 0.4);
+    width: 260px; background: rgba(20, 20, 25, 0.8); /* Sidebar plus sombre */
     border-right: 1px solid var(--set-border);
     display: flex; flex-direction: column; padding: 25px 0;
     z-index: 10;
@@ -153,10 +149,9 @@ p { -webkit-margin-before: 0em; -webkit-margin-after: 0em; }
 }
 #settingsNavDone:hover { background: var(--set-accent); color: black; }
 
-/* --- CONTENU DROIT (Cartes) --- */
+/* --- CONTENU DROIT --- */
 #settingsContainerRight { flex: 1; padding: 40px; overflow-y: auto; background: transparent; }
 
-/* Titre des Onglets */
 .settingsTabHeader { margin-bottom: 30px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
 .settingsTabHeaderText { 
     font-size: 32px; font-weight: bold; color: white; 
@@ -164,7 +159,7 @@ p { -webkit-margin-before: 0em; -webkit-margin-after: 0em; }
 }
 .settingsTabHeaderDesc { color: #aaa; font-size: 14px; }
 
-/* === STYLE DES CARTES (Performance Optimized) === */
+/* === STYLE DES CARTES (PROPRE & LISIBLE) === */
 .settingsFieldContainer,
 #settingsGameResolutionContainer,
 .settingsAuthAccountTypeContainer,
@@ -174,16 +169,19 @@ p { -webkit-margin-before: 0em; -webkit-margin-after: 0em; }
 #settingsAboutCurrentContainer,
 .settingsChangelogContainer,
 #settingsUpdateStatusContainer,
-.settingsSelServContainer,
-#settingsDropinModsContainer {
-    background: rgba(30, 30, 30, 0.6); /* Fond plus solide */
+/* Note: On n'applique PAS le style carte aux mods pour garder la grille libre */
+.settingsSelServContainer {
+    background: var(--set-card-bg); /* Fond Gris foncé solide/transparent */
     border: 1px solid var(--set-border);
     border-radius: 8px;
     padding: 20px 25px;
     margin-bottom: 20px;
     width: 100%;
     box-sizing: border-box;
+    transition: 0.3s;
 }
+/* Pas de hover flashy sur les cartes Java/Launcher */
+.settingsFieldContainer:hover { border-color: rgba(255, 255, 255, 0.2); }
 
 /* Titres internes */
 .settingsFieldTitle, .settingsMemoryHeader, .settingsFileSelTitle, 
@@ -192,100 +190,58 @@ p { -webkit-margin-before: 0em; -webkit-margin-after: 0em; }
     font-size: 16px; font-weight: bold; color: white; margin-bottom: 8px; display: block;
 }
 .settingsFieldDesc, #settingsMemoryDesc, .settingsFileSelDesc, #settingsJVMOptsDesc {
-    color: #ccc; font-size: 12px; margin-top: 5px;
+    color: var(--text-muted); font-size: 13px; margin-top: 5px;
 }
 
 /* -------------------------------------------------------
-   1. TOGGLE SWITCH (MODERN CLEAN STYLE)
+   TOGGLE SWITCH (MODERN CLEAN - NO NEON)
    ------------------------------------------------------- */
-
-/* Correction de l'alignement texte / bouton */
 .settingsFieldContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px; /* Espace de sécurité */
-    min-height: 40px; /* Hauteur minimale */
+    display: flex; justify-content: space-between; align-items: center; gap: 20px;
 }
+.settingsFieldLeft { flex: 1; padding-right: 15px; }
 
-.settingsFieldLeft {
-    flex: 1; /* Le texte prend toute la place disponible à gauche */
-    padding-right: 15px;
-}
-
-/* Le conteneur du bouton switch */
 .toggleSwitch {
-    position: relative;
-    width: 48px;  /* Largeur fixe et compacte */
-    height: 26px; /* Hauteur fixe */
-    flex-shrink: 0; /* Empêche le bouton de s'écraser si le texte est long */
+    position: relative; width: 48px; height: 26px; flex-shrink: 0; display: block;
 }
+.toggleSwitch input { opacity: 0; width: 0; height: 0; }
 
-/* Input caché */
-.toggleSwitch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-/* La piste (le fond du bouton) */
 .toggleSwitchSlider {
-    position: absolute;
-    cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(255, 255, 255, 0.1); /* Gris sombre inactif */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Bordure subtile */
-    border-radius: 34px; /* Forme de pilule parfaite */
-    transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Animation fluide */
-}
-
-/* Le rond (la poignée) */
-.toggleSwitchSlider:before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 2px;
-    bottom: 2px; /* Centré verticalement */
-    background-color: #a1a1aa; /* Gris clair quand inactif */
-    border-radius: 50%;
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1); /* Fond gris inactif */
+    border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 34px;
     transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Légère ombre pour le relief */
+}
+.toggleSwitchSlider:before {
+    position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+    background-color: #a1a1aa; border-radius: 50%;
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-/* --- ÉTAT ACTIVÉ (ON) --- */
-
-/* Le fond prend la couleur d'accent (Bleu Cyan) */
-input:checked + .toggleSwitchSlider {
-    background-color: var(--set-accent);
-    border-color: var(--set-accent);
-}
-
-/* Le rond bouge à droite et devient blanc pur */
-input:checked + .toggleSwitchSlider:before {
-    transform: translateX(22px);
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
+/* Activé */
+input:checked + .toggleSwitchSlider { background-color: var(--set-accent); border-color: var(--set-accent); }
+input:checked + .toggleSwitchSlider:before { transform: translateX(22px); background-color: white; }
 
 /* Inputs & Sliders */
 #settingsContainer input[type="text"], #settingsContainer input[type="number"] {
-    background: rgba(0,0,0,0.5); border: 1px solid #555;
+    background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
     color: white; padding: 10px 12px; border-radius: 4px; font-size: 13px;
     font-family: 'Avenir Book', sans-serif;
 }
 #settingsContainer input:focus { border-color: var(--set-accent); outline: none; }
 
+/* Memory Sliders (Clean) */
 .rangeSlider { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; position: relative; margin: 15px 0; }
 .rangeSliderBar { height: 100%; background: var(--set-accent); border-radius: 3px; }
 .rangeSliderTrack {
     position: absolute; top: -5px; width: 16px; height: 16px; background: white;
-    border-radius: 50%; cursor: grab; transform: translateX(-50%); box-shadow: 0 0 10px white;
+    border-radius: 50%; cursor: grab; transform: translateX(-50%); box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 /* Comptes */
 .settingsAuthAccount {
-    background: rgba(0, 0, 0, 0.4); border: 1px solid var(--set-border);
+    background: rgba(0, 0, 0, 0.3); border: 1px solid var(--set-border);
     border-radius: 6px; padding: 15px; display: flex; align-items: center; margin-bottom: 10px;
 }
 .settingsAuthAccountLeft img { border-radius: 4px; border: 1px solid #555; height: 50px; }
@@ -295,7 +251,7 @@ input:checked + .toggleSwitchSlider:before {
     padding: 6px 12px; border-radius: 4px; font-size: 11px; cursor: pointer; transition: 0.2s;
 }
 .settingsAuthAccountSelect[selected] { 
-    background: rgba(0, 255, 0, 0.1); border-color: #00ff00; color: #00ff00; 
+    background: rgba(0, 255, 0, 0.1); border-color: var(--set-success); color: var(--set-success); 
 }
 .settingsAuthAccountLogOut {
     background: transparent; border: 1px solid #ff4444; color: #ff4444;
@@ -307,8 +263,8 @@ input:checked + .toggleSwitchSlider:before {
 }
 .settingsAddAuthAccount:hover { background: white; color: black; }
 
-/* === MODS TAB - GRILLE NEON VERT === */
-#settingsOptModsContainer { display: none !important; }
+/* === MODS TAB - GRILLE NEON VERT (Uniquement ici) === */
+#settingsOptModsContainer, #settingsDropinModsContainer { display: none !important; }
 
 .settingsModsHeader { 
     border-bottom: 2px solid var(--neon-green); 
@@ -343,19 +299,40 @@ input:checked + .toggleSwitchSlider:before {
 }
 .settingsSubModContainer { display: none; }
 
-/* About & Update */
+/* === SHADERS - CLEAN GRID === */
+#settingsShaderpackButton, .settingsSelectContainer { display: none !important; }
+#settingsShaderpackDesc { margin-bottom: 15px; color: #ccc; font-size: 12px; font-style: italic; }
+
+#settingsShadersOptions {
+    display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; margin-top: 10px;
+    max-height: 300px; overflow-y: auto; padding-right: 5px;
+}
+#settingsShadersOptions::-webkit-scrollbar { width: 4px; }
+#settingsShadersOptions::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+.shaderPackItem {
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px; padding: 15px; cursor: pointer; transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.shaderPackItem:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
+.shaderPackItem[selected] { background: rgba(0, 243, 255, 0.1); border: 1px solid var(--set-accent); box-shadow: 0 0 10px rgba(0, 243, 255, 0.1); }
+.shaderPackName { font-weight: bold; font-size: 13px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85%; }
+.shaderPackCheck { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); }
+.shaderPackItem[selected] .shaderPackCheck { border-color: var(--set-accent); background: var(--set-accent); box-shadow: 0 0 8px var(--set-accent); }
+.shaderPackItem[value="OFF"] .shaderPackName { color: #ff5555; text-transform: uppercase; letter-spacing: 1px; }
+
+/* About & Update (NO NEON) */
 #settingsAboutCurrentHeadline { display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 15px; }
 #settingsAboutTitle { font-size: 24px; font-weight: bold; margin-left: 15px; }
 #settingsAboutCurrentVersionCheck {
-    background: var(--neon-green); color: black; border-radius: 50%;
+    background: var(--set-success); color: white; border-radius: 50%;
     width: 20px; height: 20px; text-align: center; line-height: 20px; margin-right: 10px; font-weight: bold;
+    box-shadow: none; /* Pas de glow */
 }
-#settingsAboutCurrentVersionTitle { color: var(--neon-green); font-weight: bold; font-size: 14px; }
+#settingsAboutCurrentVersionTitle { color: var(--set-success); font-weight: bold; font-size: 14px; text-shadow: none; }
 
-/*******************************************************************************
- * SETTINGS - BOUTON SERVEUR (DESIGN "CYBER ACTION")
- ******************************************************************************/
-
+/* === SELECTEUR SERVEUR - CYBER ACTION STYLE === */
 .settingsSelServContainer {
     display: flex; justify-content: space-between; align-items: center;
     background: rgba(30, 30, 30, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
@@ -387,8 +364,7 @@ input:checked + .toggleSwitchSlider:before {
 
 #overlayContainer {
     position: absolute; inset: 0;
-    background: rgba(0, 0, 0, 0.85); /* Plus sombre, moins de flou */
-    backdrop-filter: blur(5px); /* Optimisé : 5px au lieu de 20px */
+    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
     z-index: 5000; display: flex; align-items: center; justify-content: center;
     opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
     transform: translate3d(0,0,0);
@@ -561,18 +537,545 @@ input:checked + .toggleSwitchSlider:before {
     opacity: 0; border-radius: 4px; z-index: -1;
 }
 #launch_button.is-launching::after { animation: shockwave 0.6s ease-out forwards; }
+/* =============================================================================
+   JAVA & FILE SELECTORS (MODERN CLEAN STYLE)
+   ============================================================================= */
+
+/* 1. Conteneurs (Style Carte Unifié) */
+#settingsMemoryContainer,
+.settingsFileSelContainer,
+#settingsJVMOptsContainer {
+    background: rgba(255, 255, 255, 0.05); /* Fond vitré subtil */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Bordure fine */
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+/* Effet de focus au survol de la section */
+#settingsMemoryContainer:hover,
+.settingsFileSelContainer:hover,
+#settingsJVMOptsContainer:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+/* 2. Titres et Descriptions */
+#settingsMemoryTitle, 
+.settingsFileSelTitle, 
+#settingsJVMOptsTitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+#settingsMemoryDesc, 
+.settingsFileSelDesc, 
+#settingsJVMOptsDesc {
+    font-size: 12px;
+    color: #a1a1aa; /* Gris moyen */
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+/* 3. Sélecteur de Fichier (Java Path) - CORRECTION TAILLE IMAGE */
+.settingsFileSelActions {
+    display: flex;
+    align-items: stretch;
+    height: 42px; /* Hauteur fixe et élégante */
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* L'icône (Contrainte de taille stricte) */
+.settingsFileSelIcon {
+    width: 42px; /* Carré parfait */
+    min-width: 42px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: none;
+    border-radius: 6px 0 0 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settingsFileSelSVG {
+    width: 18px !important; /* Taille forcée petite */
+    height: 18px !important;
+    fill: #a1a1aa; /* Gris par défaut */
+    transition: 0.3s;
+}
+
+/* Le Champ Texte (Input) */
+.settingsFileSelVal {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: none;
+    border-right: none;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 0 15px;
+    border-radius: 0;
+}
+
+/* Le Bouton "Choisir" */
+.settingsFileSelButton {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: none;
+    color: white;
+    padding: 0 20px;
+    border-radius: 0 6px 6px 0;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+/* Interaction Hover sur tout le groupe */
+.settingsFileSelActions:hover .settingsFileSelIcon,
+.settingsFileSelActions:hover .settingsFileSelVal,
+.settingsFileSelActions:hover .settingsFileSelButton {
+    border-color: var(--set-accent); /* Tout devient Cyan */
+}
+
+.settingsFileSelActions:hover .settingsFileSelSVG {
+    fill: var(--set-accent);
+    transform: scale(1.1);
+}
+
+.settingsFileSelButton:hover {
+    background: var(--set-accent);
+    color: black; /* Texte noir sur fond cyan */
+}
+
+/* 4. Gestion de la RAM (Sliders) */
+#settingsMemoryContent {
+    display: flex;
+    justify-content: space-between;
+    align-items:flex-start;
+    gap: 30px;
+    margin-top: 15px;
+}
+
+#settingsMemoryContentLeft {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.settingsMemoryContentItem {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.settingsMemoryHeader {
+    font-size: 11px;
+    font-weight: 700;
+    color: #a1a1aa;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.settingsMemoryLabel {
+    font-weight: 700;
+    color: var(--set-accent);
+    font-size: 14px;
+    min-width: 40px;
+    text-align: right;
+}
+
+.settingsMemoryActionContainer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* 5. Statut Mémoire (Droite) */
+#settingsMemoryContentRight {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 120px;
+}
+
+.settingsMemoryStatusContainer {
+    background: rgba(0,0,0,0.3);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.settingsMemoryStatusTitle {
+    font-size: 10px;
+    color: #71717a;
+    text-transform: uppercase;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.settingsMemoryStatusValue {
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+}
+
+/* 6. JVM Arguments Input */
+#settingsJVMOptsContent input {
+    width: 100%;
+    height: 42px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 0 15px;
+    color: white;
+    font-family: 'Consolas', 'Monaco', monospace; /* Police code */
+    font-size: 12px;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+#settingsJVMOptsContent input:focus {
+    border-color: var(--set-accent);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
+    outline: none;
+}
+/* =============================================================================
+   ABOUT & UPDATE TAB (MODERN CLEAN STYLE)
+   ============================================================================= */
+
+/* 1. Conteneurs Principaux (Cartes) */
+#settingsAboutCurrentContainer,
+.settingsChangelogContainer,
+#settingsUpdateStatusContainer {
+    background: rgba(255, 255, 255, 0.05); /* Fond vitré subtil */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Bordure fine */
+    border-radius: 8px;
+    padding: 0; /* Le padding est géré par les enfants pour le footer */
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden; /* Garde les coins arrondis */
+    transition: all 0.3s ease;
+}
+
+/* Effet de focus */
+#settingsAboutCurrentContainer:hover,
+.settingsChangelogContainer:hover,
+#settingsUpdateStatusContainer:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+/* 2. Contenu Supérieur (Infos Version) */
+#settingsAboutCurrentContent,
+#settingsUpdateStatusContent,
+.settingsChangelogContent {
+    padding: 25px;
+}
+
+/* En-tête avec Logo */
+#settingsAboutCurrentHeadline,
+#settingsUpdateStatusHeadline {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+#settingsAboutLogo {
+    width: 48px;
+    height: 48px;
+    /* Petite lueur Cyan sur le logo */
+    filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.4)); 
+}
+
+#settingsAboutTitle,
+#settingsUpdateTitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    margin-left: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Bloc Version */
+#settingsAboutCurrentVersion,
+#settingsUpdateVersion {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3); /* Fond plus sombre pour le bloc */
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Le Checkmark (Rond Validé) */
+#settingsAboutCurrentVersionCheck,
+#settingsUpdateVersionCheck {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    /* Dégradé Cyan vers Bleu */
+    background: linear-gradient(135deg, #00f3ff, #2563eb); 
+    color: black;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-right: 15px;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+}
+
+/* Textes Version */
+#settingsAboutCurrentVersionDetails,
+#settingsUpdateVersionDetails {
+    display: flex;
+    flex-direction: column;
+}
+
+#settingsAboutCurrentVersionTitle,
+#settingsUpdateVersionTitle {
+    font-size: 12px;
+    font-weight: 700;
+    color: #00f3ff; /* Cyan */
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+#settingsAboutCurrentVersionText,
+#settingsUpdateVersionText {
+    color: #a1a1aa;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+#settingsAboutCurrentVersionValue,
+#settingsUpdateVersionValue {
+    color: white;
+    font-weight: 700;
+    font-family: 'Consolas', 'Monaco', monospace; /* Police technique */
+}
+
+/* 3. Barre de Boutons (Footer) */
+#settingsAboutButtons,
+#settingsUpdateActionContainer,
+.settingsChangelogActions {
+    background: rgba(0, 0, 0, 0.3); /* Fond sombre distinct */
+    padding: 15px 25px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Boutons individuels (Liens) */
+.settingsAboutButton,
+#settingsUpdateActionButton {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e4e4e7;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.settingsAboutButton:hover,
+#settingsUpdateActionButton:hover {
+    background: #00f3ff;
+    color: black;
+    border-color: #00f3ff;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+}
+
+/* 4. Changelog (Notes de mise à jour) */
+.settingsChangelogHeadline {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.settingsChangelogTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+}
+
+.settingsChangelogLabel {
+    font-size: 10px;
+    color: #a1a1aa;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.settingsChangelogText {
+    font-size: 13px;
+    color: #d4d4d8;
+    line-height: 1.6;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Scrollbar interne pour le texte */
+.settingsChangelogText::-webkit-scrollbar { width: 4px; }
+.settingsChangelogText::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+/* Lien voir plus */
+.settingsChangelogButton {
+    color: #00f3ff !important; /* Force la couleur */
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+.settingsChangelogButton:hover {
+    background: transparent !important;
+    text-decoration: underline !important;
+    box-shadow: none !important;
+    color: white !important;
+}
 
 /*******************************************************************************
- * LOADING / WAITING
+ * LOADING SCREEN - QUANTUM CORE STYLE
  ******************************************************************************/
 
-#loadingContainer, #waitingContainer {
-    position: absolute; z-index: 400; display: flex; align-items: center; justify-content: center;
-    width: 100%; height: calc(100% - 22px); background: #101010;
+/* 1. Le Fond (Immersif) */
+#loadingContainer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at center, #1a1a20 0%, #050505 100%);
+    z-index: 9000; /* Toujours au-dessus */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
-.spinner-premium {
-    width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.1);
-    border-top-color: var(--set-accent); border-radius: 50%;
-    animation: spin 1s ease-in-out infinite; margin-bottom: 20px;
+
+/* 2. Le Réacteur (Spinner) */
+.quantum-loader {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.loader-text { font-family: 'Avenir Medium'; font-size: 14px; letter-spacing: 2px; color: #888; }
+
+/* Les anneaux d'énergie */
+.quantum-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-top-color: #00f3ff; /* Cyan */
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+}
+
+/* Anneau 1 (Extérieur) */
+.quantum-ring:nth-child(1) {
+    width: 100%; height: 100%;
+    animation: spin-right 2s linear infinite;
+    border-top-color: #00f3ff;
+}
+
+/* Anneau 2 (Milieu) */
+.quantum-ring:nth-child(2) {
+    width: 70%; height: 70%;
+    animation: spin-left 1.5s linear infinite;
+    border-top-color: #3b82f6; /* Bleu Royal */
+    border-bottom-color: #3b82f6; /* Double arc */
+}
+
+/* Anneau 3 (Intérieur) */
+.quantum-ring:nth-child(3) {
+    width: 40%; height: 40%;
+    animation: spin-right 1s linear infinite;
+    border-top-color: white;
+}
+
+/* Le Cœur (Noyau central qui pulse) */
+.quantum-core {
+    width: 15px; height: 15px;
+    background: #00f3ff;
+    border-radius: 50%;
+    box-shadow: 0 0 20px #00f3ff, 0 0 40px #00f3ff;
+    animation: pulse-core 1.5s ease-in-out infinite alternate;
+}
+
+/* 3. Le Texte (Animé) */
+.loading-text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.loader-text {
+    font-family: 'Avenir Medium', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    animation: text-breathe 2s ease-in-out infinite;
+}
+
+.loader-subtext {
+    margin-top: 5px;
+    font-size: 10px;
+    color: #3b82f6;
+    letter-spacing: 2px;
+    opacity: 0.7;
+}
+
+/* --- ANIMATIONS --- */
+
+@keyframes spin-right {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes spin-left {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-360deg); }
+}
+
+@keyframes pulse-core {
+    0% { transform: scale(0.8); opacity: 0.7; }
+    100% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 30px #00f3ff; }
+}
+
+@keyframes text-breathe {
+    0%, 100% { letter-spacing: 4px; opacity: 1; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
+    50% { letter-spacing: 8px; opacity: 0.6; text-shadow: 0 0 0 transparent; }
+}

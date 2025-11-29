@@ -594,29 +594,54 @@ async function resolveShaderpacksForUI(){
 function setShadersOptions(arr, selected){
     const cont = document.getElementById('settingsShadersOptions')
     cont.innerHTML = ''
+
+    // 1. Création de la carte "OFF" (Toujours en premier)
+    const offDiv = document.createElement('div')
+    offDiv.className = 'shaderPackItem'
+    offDiv.setAttribute('value', 'OFF')
+    if(selected === 'OFF') offDiv.setAttribute('selected', '')
+    
+    offDiv.innerHTML = `
+        <span class="shaderPackName">DÉSACTIVÉ</span>
+        <div class="shaderPackCheck"></div>
+    `
+    offDiv.onclick = () => selectShaderPack(offDiv)
+    cont.appendChild(offDiv)
+
+    // 2. Création des cartes pour les autres shaders
     for(let opt of arr) {
-        const d = document.createElement('DIV')
-        d.innerHTML = opt.name
+        const d = document.createElement('div')
+        d.className = 'shaderPackItem'
         d.setAttribute('value', opt.fullName)
         if(opt.fullName === selected) {
             d.setAttribute('selected', '')
-            document.getElementById('settingsShadersSelected').innerHTML = opt.name
         }
-        d.addEventListener('click', function(e) {
-            this.parentNode.previousElementSibling.innerHTML = this.innerHTML
-            for(let sib of this.parentNode.children){
-                sib.removeAttribute('selected')
-            }
-            this.setAttribute('selected', '')
-            closeSettingsSelect()
-        })
+        
+        d.innerHTML = `
+            <span class="shaderPackName">${opt.name}</span>
+            <div class="shaderPackCheck"></div>
+        `
+        d.onclick = () => selectShaderPack(d)
         cont.appendChild(d)
     }
 }
 
+// Nouvelle fonction utilitaire pour gérer le clic
+function selectShaderPack(el) {
+    // Retirer la sélection des autres
+    const siblings = document.getElementById('settingsShadersOptions').children
+    for(let sib of siblings){
+        sib.removeAttribute('selected')
+    }
+    // Sélectionner l'élément cliqué
+    el.setAttribute('selected', '')
+}
+
+// Mise à jour de la fonction de sauvegarde pour lire la grille
 function saveShaderpackSettings(){
     let sel = 'OFF'
-    for(let opt of document.getElementById('settingsShadersOptions').childNodes){
+    const options = document.getElementById('settingsShadersOptions').children
+    for(let opt of options){
         if(opt.hasAttribute('selected')){
             sel = opt.getAttribute('value')
         }
