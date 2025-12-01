@@ -27,7 +27,8 @@ exports.getLauncherDirectory = function(){
  * @returns {string} The absolute path of the launcher's data directory.
  */
 exports.getDataDirectory = function(def = false){
-    return !def ? config.settings.launcher.dataDirectory : DEFAULT_CONFIG.settings.launcher.dataDirectory
+    // Force l'utilisation de dataPath (.invergencenetwork) peu importe la config sauvegardée
+    return dataPath
 }
 
 /**

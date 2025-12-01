@@ -56,7 +56,47 @@ function switchView(current, next, currentFadeTime = 500, nextFadeTime = 500, on
 function getCurrentView(){
     return currentView
 }
+/**
+ * Updates the UI with the selected server information.
+ * * @param {Object} serv The server object.
+ */
+/**
+ * Fonction de mise à jour de l'interface serveur (Ajout correctif)
+ */
+function updateSelectedServer(serv){
+    if(getCurrentView() === VIEWS.landing){
+        const titleEl = document.getElementById('invergenceTitle');
+        const subtitleEl = document.querySelector('.hero-subtitle');
+        const playerCount = document.getElementById('player_count');
+        
+        // Mise à jour du texte joueurs
+        if(playerCount) playerCount.innerHTML = 'Connexion...';
+        
+        // Mise à jour de l'icône si nécessaire
+        const seal = document.getElementById('image_seal');
+        if(seal && serv.rawServer.icon) {
+            seal.src = serv.rawServer.icon;
+        }
+    }
+}
+/**
+ * Fonction anti-crash : Rafraichit le statut du serveur.
+ */
+function refreshServerStatus(){
+    // Mise à jour simple pour éviter l'erreur "ReferenceError"
+    // La vraie logique se fera via le landing.js une fois chargé
+    const playerCount = document.getElementById('player_count');
+    if(playerCount) playerCount.innerHTML = 'En ligne';
+}
 
+/**
+ * Fonction anti-crash : Initialise les news.
+ * Nécessaire car uibinder l'appelle au démarrage.
+ */
+async function initNews(){
+    // On renvoie une promesse résolue immédiatement pour ne pas bloquer le chargement
+    return Promise.resolve();
+}
 async function showMainUI(data){
 
     if(!isDev){

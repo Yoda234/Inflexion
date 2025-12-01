@@ -1,10 +1,10 @@
 {
-  "name": "invergencerp",
-  "version": "2.2.4",
-  "productName": "Invergence RP Network",
-  "description": "Modded Minecraft Launcher",
-  "author": "Daniel Scalzi (https://github.com/dscalzi/) modifier par Inflexion",
-  "license": "UNLICENSED",
+  "name": "invergencenetwork",
+  "version": "2.2.5",
+  "productName": "InvergenceRPNetwork",
+  "description": "Lanceur Minecraft moddé pour Invergence RP",
+  "author": "Yodish (Basé sur le travail de Daniel Scalzi)",
+  "license": "MIT",
   "homepage": "https://github.com/Yoda234/Inflexion",
   "bugs": {
     "url": "https://github.com/Yoda234/Inflexion/issues"

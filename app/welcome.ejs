@@ -1,25 +1,29 @@
 <div id="welcomeContainer" style="display: none;">
-    <!--<div class="cloudDiv">
-        <div class="cloudTop"></div>
-        <div class="cloudBottom"></div>
-    </div>-->
+    
+    <div class="welcome-background-overlay"></div>
+
     <div id="welcomeContent">
-        <img id="welcomeImageSeal" src="assets/images/SealCircle.png"/>
-        <span id="welcomeHeader"><%- lang('welcome.welcomeHeader') %></span>
-        <span id="welcomeDescription"><%- lang('welcome.welcomeDescription') %></span>
-        <br>
-        <span id="welcomeDescCTA"><%- lang('welcome.welcomeDescCTA') %></span>
+        
+        <div class="welcome-logo-wrapper">
+            <img id="welcomeImageSeal" src="assets/images/SealCircle.png"/>
+            <div class="welcome-logo-glow"></div>
+        </div>
+
+        <div class="welcome-text-area">
+            <h1 id="welcomeHeader"><%- lang('welcome.welcomeHeader') %></h1>
+            
+            <div class="welcome-divider"></div>
+            
+            <p id="welcomeDescription"><%- lang('welcome.welcomeDescription') %></p>
+            <p id="welcomeDescCTA"><%- lang('welcome.welcomeDescCTA') %></p>
+        </div>
+
         <button id="welcomeButton">
-            <div id="welcomeButtonContent">
-                <%- lang('welcome.continueButton') %>
-                <svg id="welcomeSVG" viewBox="0 0 24.87 13.97">
-                    <defs>
-                        <style>.arrowLine{fill:none;stroke:#FFF;stroke-width:2px;transition: 0.25s ease;}</style>
-                    </defs>
-                    <polyline class="arrowLine" points="0.71 13.26 12.56 1.41 24.16 13.02"/>
-                </svg>
-            </div>
+            <span class="btn-text"><%- lang('welcome.continueButton') %></span>
+            <div class="btn-icon">➔</div>
         </button>
+
     </div>
+    
     <script src="./assets/js/scripts/welcome.js"></script>
 </div>

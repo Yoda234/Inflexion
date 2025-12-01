@@ -1,88 +1,242 @@
 <div id="landingContainer" style="display: none;">
 
-    <div id="landingHeroTop">
-        
-        <div id="user_content" class="glass-pill">
-            <div id="avatarContainer"></div>
-            <div class="user-info">
-                <span class="user-label">COMPTE</span>
-                <span id="user_text"><%- lang('landing.usernamePlaceholder') %></span>
-                <span id="user_rank" class="rank-player">CHARGEMENT...</span>
-            </div>
+    <aside id="dashboardSidebar">
+        <div class="sidebar-logo">
+            <img src="assets/images/SealCircle.png" alt="Logo">
         </div>
 
-        <div class="media-dock glass-pill">
-            <button class="mediaButton" id="musicButton" title="Musique">
-                <svg class="mediaSVG" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM3 9v6h4l5 5V4L7 9H3z"/>
-                </svg>
+        <div class="sidebar-menu">
+            <button class="sidebar-btn active" title="Accueil">
+                <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" /></svg>
             </button>
-            <div class="media-divider"></div>
-            <div id="settingsMediaContainer">
-                <button class="mediaButton" id="settingsMediaButton" title="Paramètres">
-                    <svg class="mediaSVG" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
-                    </svg>
-                    <div id="settingsTooltip" style="display:none;"></div>
-                </button>
-            </div>
-        </div>
-    </div>
 
-    <div id="landingHeroBottom">
-        
-        <div class="bottom-left-col">
-            <div id="server_status_wrapper" class="glass-pill status-pill">
-                <div class="status-dot"></div>
-                <div class="status-text-group">
-                    <span id="landingPlayerLabel"><%- lang('landing.serverStatus') %></span>
-                    <span id="player_count"><%- lang('landing.serverStatusPlaceholder') %></span>
-                </div>
-            </div>
-            <div id="mojangStatusWrapper" style="display:none;"></div>
+            <button class="sidebar-btn" id="server_selection_button" title="Changer de Serveur">
+                <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z" /></svg>
+            </button>
+
+            <button class="sidebar-btn" id="settingsMediaButton" title="Paramètres">
+                <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+            </button>
         </div>
 
-        <div class="bottom-center-col">
+        <div class="sidebar-bottom">
             
-            <div id="serverTitleContainer">
-                <h1 id="invergenceTitle">INVERGENCE <span class="title-accent">NETWORK</span></h1>
-            </div>
-
-            <div class="launch-wrapper">
-                <div id="launch_content">
-                    <button id="launch_button">JOUER</button>
-                </div>
-                <div id="launch_details" style="display:none;">
-                    <div class="launch-info-row">
-                        <span id="launch_details_text"><%- lang('landing.launchDetails') %></span>
-                        <span id="launch_progress_label">0%</span>
-                    </div>
-                    <progress id="launch_progress" value="0" max="100"></progress>
-                </div>
-            </div>
-
-            <button id="server_selection_button" class="glass-select">
-                <span class="server-text"><%- lang('landing.launchButtonPlaceholder') %></span>
-            </button>
-
-            <div id="image_seal_container" style="display:none;">
-                <img id="image_seal" src="assets/images/SealCircle.png"/>
-                <div id="updateAvailableTooltip"></div>
-            </div>
-        </div>
-
-        <div class="bottom-right-col">
-            <button id="newsButton" class="glass-pill news-pill">
-                <span id="newsButtonText">ACTUALITÉS</span>
-                <svg id="newsButtonSVG" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M20,2H4C2.89,2 2,2.89 2,4V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V4C22,2.89 21.1,2 20,2M20,18H4V4H20V18M18,6H6V8H18V6M18,10H6V12H18V10M18,14H6V16H18V14Z" />
+            <button class="sidebar-btn" id="closeLauncherBtn" title="Fermer le Launcher">
+                <svg viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
                 </svg>
-                <div id="newsButtonAlert"></div>
+            </button>
+
+            <div class="sidebar-divider"></div>
+
+            <button class="sidebar-btn" id="musicButton" title="Musique">
+                <svg id="musicSVG" class="mediaSVG" viewBox="0 0 24 24"><path fill="currentColor" d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM3 9v6h4l5 5V4L7 9H3z"/></svg>
             </button>
         </div>
+    </aside>
 
+    <main id="dashboardContent">
+        
+        <header id="dashboardTopBar">
+            <div class="socials-container">
+                <a href="https://discord.gg/WNEAaYB5BF" class="social-icon discord">
+                    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M22,24L16.75,19L17.38,21H4.5A2.5,2.5 0 0,1 2,18.5V3.5A2.5,2.5 0 0,1 4.5,1H19.5A2.5,2.5 0 0,1 22,3.5V24M12,6.8C9.32,6.8 7.44,7.95 7.44,7.95C7.44,7.95 6.21,12.03 6.21,12.03C5.12,15.3 9.08,17.67 9.08,17.67C9.08,17.67 10.63,14.93 10.63,14.93C9.06,14.24 8.42,12.96 8.42,12.96C8.42,12.96 10.08,13.97 12,13.97C13.92,13.97 15.58,12.96 15.58,12.96C15.58,12.96 14.94,14.24 13.37,14.93C13.37,14.93 14.92,17.67 14.92,17.67C14.92,17.67 18.88,15.3 17.79,12.03C17.79,12.03 16.56,7.95 16.56,7.95C16.56,7.95 14.68,6.8 12,6.8M9.91,9.37C10.56,9.37 11.09,9.91 11.09,10.57C11.09,11.23 10.56,11.76 9.91,11.76C9.26,11.76 8.73,11.23 8.73,10.57C8.73,9.91 9.26,9.37 9.91,9.37M14.09,9.37C14.74,9.37 15.27,9.91 15.27,10.57C15.27,11.23 14.74,11.76 14.09,11.76C13.44,11.76 12.91,11.23 12.91,10.57C12.91,9.91 13.44,9.37 14.09,9.37Z" /></svg>
+                </a>
+                
+                <a href="https://www.youtube.com/@Yoda234" class="social-icon youtube">
+                    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10,15L15.19,12L10,9V15M21.56,7.17C21.69,7.64 21.78,8.27 21.84,9.07C21.91,9.87 21.94,10.56 21.94,11.16L22,12C22,14.19 21.84,15.8 21.56,16.83C21.31,17.73 20.73,18.31 19.83,18.56C19.36,18.69 18.5,18.78 17.18,18.84C15.88,18.91 14.69,18.94 13.59,18.94L12,19C7.81,19 5.2,18.84 4.17,18.56C3.27,18.31 2.69,17.73 2.44,16.83C2.31,16.36 2.22,15.73 2.16,14.93C2.09,14.13 2.06,13.44 2.06,12.84L2,12C2,9.81 2.16,8.2 2.44,7.17C2.69,6.27 3.27,5.69 4.17,5.44C4.64,5.31 5.5,5.22 6.82,5.16C8.12,5.09 9.31,5.06 10.41,5.06L12,5C16.19,5 18.8,5.16 19.83,5.44C20.73,5.69 21.31,6.27 21.56,7.17Z" /></svg>
+                </a>
+                
+                <a href="https://play.infllexionhost.eu" class="social-icon website">
+                    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.36,14C16.44,13.34 16.5,12.68 16.5,12C16.5,11.32 16.44,10.66 16.36,10H19.74C19.9,10.64 20,11.31 20,12C20,12.69 19.9,13.36 19.74,14M14.59,19.56C15.19,18.45 15.65,17.25 15.97,16H18.92C17.96,17.65 16.43,18.93 14.59,19.56M14.34,14H9.66C9.56,13.34 9.5,12.68 9.5,12C9.5,11.32 9.56,10.66 9.66,10H14.34C14.44,10.66 14.5,11.32 14.5,12C14.5,12.68 14.44,13.34 14.34,14M12,19.96C11.17,18.76 10.5,17.43 10.09,16H13.91C13.5,17.43 12.83,18.76 12,19.96M8,8H5.08C6.04,6.35 7.57,5.07 9.41,4.44C8.81,5.55 8.35,6.75 8.03,8M5.08,16H8.03C8.35,17.25 8.81,18.45 9.41,19.56C7.57,18.93 6.04,17.65 5.08,16M4.26,14C4.1,13.36 4,12.69 4,12C4,11.31 4.1,10.64 4.26,10H7.64C7.56,10.66 7.5,11.32 7.5,12C7.5,12.68 7.56,13.34 7.64,14M12,4.03C12.83,5.23 13.5,6.57 13.91,8H10.09C10.5,6.57 11.17,5.23 12,4.03M18.92,8H15.97C15.65,6.75 15.19,5.55 14.59,4.44C16.43,5.07 17.96,6.35 18.92,8M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg>
+                </a>
+            </div>
+            
+            <div class="top-server-status">
+                <span class="status-dot"></span>
+                <span id="player_count"><%- lang('landing.serverStatusPlaceholder') %></span>
+                <span class="status-label">JOUEURS</span>
+            </div>
+        </header>
+
+        <div id="dashboardHero">
+            
+            <div class="collage-wrapper">
+                <div class="collage-img c-1" style="background-image: url('assets/images/backgrounds/1.jpg');"></div>
+                <div class="collage-img c-2" style="background-image: url('assets/images/backgrounds/2.jpg');"></div>
+                <div class="collage-img c-3" style="background-image: url('assets/images/backgrounds/3.jpg');"></div>
+                <div class="collage-img c-4" style="background-image: url('assets/images/backgrounds/4.jpg');"></div>
+                <div class="collage-img c-5" style="background-image: url('assets/images/backgrounds/5.jpg');"></div>
+                <div class="collage-overlay"></div>
+            </div>
+
+            <div class="hero-content-centered">
+                
+                <div id="serverTitleContainer">
+                    <h1 id="invergenceTitle">INVERGENCE <span class="title-accent">NETWORK</span></h1>
+                    <p class="hero-subtitle">Rejoignez l'aventure ultime.</p>
+                </div>
+                
+                <div class="launch-wrapper">
+                    <div id="launch_content">
+                        <button id="launch_button">JOUER</button>
+                    </div>
+                    <div id="launch_details" style="display:none;">
+                        <div class="launch-info-row">
+                            <span id="launch_details_text">Chargement...</span>
+                            <span id="launch_progress_label">0%</span>
+                        </div>
+                        <progress id="launch_progress" value="0" max="100"></progress>
+                    </div>
+                </div>
+
+                <div id="image_seal_container" style="display:none;"><img id="image_seal" src="assets/images/SealCircle.png"/><div id="updateAvailableTooltip"></div></div>
+                <div id="landingPlayerLabel" style="display:none;"></div>
+                <div id="mojangStatusWrapper" style="display:none;"></div>
+            </div>
+
+            <div class="hero-profile-card">
+                <div id="avatarContainer"></div>
+                <div class="profile-info">
+                    <span id="user_text">Pseudo</span>
+                    <span id="user_rank" class="rank-player">JOUEUR</span>
+                </div>
+                <div id="user_content" style="display:none;"></div>
+            </div>
+        </div>
+
+        <div id="dashboardNews">
+            <div class="news-grid">
+                
+                <button id="newsButton" class="news-card">
+                    <div class="news-icon">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M20,2H4C2.89,2 2,2.89 2,4V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V4C22,2.89 21.1,2 20,2M20,18H4V4H20V18M18,6H6V8H18V6M18,10H6V12H18V10M18,14H6V16H18V14Z" /></svg>
+                    </div>
+                    <div class="news-text">
+                        <h3>ACTUALITÉS</h3>
+                        <p>Voir les mises à jour</p>
+                    </div>
+                    <div id="newsButtonAlert"></div>
+                </button>
+                
+                <button id="skinManagerBtn" class="news-card secondary">
+                    <div class="news-icon">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12,2C13.1,2 14,2.9 14,4V5H10V4C10,2.9 10.9,2 12,2M12,6H18V10H14V12H12V10H10V12H8V10H6V6H12M20,12V18H18V20H16V18H14V22H10V18H8V20H6V18H4V12H20Z" /></svg>
+                    </div>
+                    <div class="news-text">
+                        <h3>SKINS</h3>
+                        <p>Gérer votre apparence</p>
+                    </div>
+                </button>
+
+                <button id="serverSelectBtnBottom" class="news-card secondary">
+                    <div class="news-icon">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z" /></svg>
+                    </div>
+                    <div class="news-text">
+                        <h3>SERVEURS</h3>
+                        <p>Changer de mode de jeu</p>
+                    </div>
+                </button>
+
+            </div>
+            
+        </div>
+        <div id="newsOverlay" style="display: none;">
+            <div class="news-box">
+                <div class="news-header">
+                    <span class="news-header-title">DERNIÈRES ACTUALITÉS</span>
+                    <button id="closeNewsBtn">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+                    </button>
+                </div>
+                <div id="newsListContent">
+                    </div>
+            </div>
+        </div>
+        <div id="skinOverlay" style="display: none;">
+            <div class="skin-manager-box">
+                <div class="skin-manager-header">
+                    <div class="header-left">
+                        <span class="manager-title">MES SKINS</span>
+                    </div>
+                    <div class="header-right">
+                        <div id="adminSkinSearch" style="display:none;">
+                            <input type="text" id="adminSearchInput" placeholder="UUID Joueur...">
+                            <button id="adminSearchBtn">VOIR</button>
+                        </div>
+                        <button id="closeSkinBtn" class="close-btn">×</button>
+                    </div>
+                </div>
+
+                <div class="skin-manager-body">
+                    <div class="skin-sidebar">
+                        <div class="sidebar-header">
+                            <span>DOSSIERS</span>
+                            <button id="createFolderBtn" title="Nouveau Dossier">+</button>
+                        </div>
+                        <div id="folderList">
+                            </div>
+                    </div>
+
+                    <div class="skin-content-area" id="skinDropZone">
+                        <div id="skinPreviewHeader" style="display:none;">
+                            <div class="preview-left">
+                                <img id="previewImageBig" src="" alt="Aperçu">
+                            </div>
+                            <div class="preview-right">
+                                <h3 id="previewName">Nom du Skin</h3>
+                                <p id="previewDimensions">Résolution: ...</p>
+                                <div class="preview-actions">
+                                    <input type="text" id="previewUrlInput" readonly>
+                                    <button id="previewCopyBtn">COPIER LE LIEN</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content-actions">
+                            <button id="uploadSkinBtn" class="action-btn">Importer un Skin (PNG)</button>
+                            <span id="currentPathLabel">/</span>
+                        </div>
+                        
+                        <div id="skinGrid" class="skin-grid-view">
+                            </div>
+
+                        <div id="emptySkinMessage" style="display:none; text-align:center; color:#555; margin-top:50px;">
+                            Dossier vide. Glissez-déposez un fichier ici.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    </main>
 
     <div id="newsContainer" style="display: none;"></div>
+    <div id="createFolderOverlay" class="custom-popup" style="display: none;">
+        <div class="custom-popup-content">
+            <h3>NOUVEAU DOSSIER</h3>
+            <input type="text" id="newFolderInput" placeholder="Nom du dossier..." autocomplete="off">
+            <div class="popup-actions">
+                <button id="confirmFolderBtn" class="skin-btn btn-use" style="padding: 8px 20px;">CRÉER</button>
+                <button id="cancelFolderBtn" class="skin-btn btn-del" style="padding: 8px 20px; width: auto;">ANNULER</button>
+            </div>
+        </div>
+    </div>
+    <div id="updateOverlay" style="display: none;">
+        <div class="update-box">
+            <div class="update-icon">🚀</div>
+            <h2 class="update-title">MISE À JOUR DÉTECTÉE</h2>
+            <p class="update-version">Une nouvelle version <span id="newVersionSpan">1.0.0</span> est disponible.</p>
+            
+            <div class="update-notes-container">
+                <p id="updateNotesText">Chargement des notes de mise à jour...</p>
+            </div>
+
+            <div class="update-actions">
+                <button id="btnUpdateDownload" class="update-btn-primary">TÉLÉCHARGER MAINTENANT</button>
+                <button id="btnUpdateIgnore" class="update-btn-secondary">IGNORER</button>
+            </div>
+        </div>
+    </div>
     <script src="./assets/js/scripts/landing.js"></script>
 </div>
