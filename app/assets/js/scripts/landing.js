@@ -18,7 +18,8 @@ const SKIN_API_ENDPOINT = "htt://play.infllexionhost.eu/api.php";
 
 const ADMIN_UUIDS = [
     "b87a8ce6a5f94ba682e2dce7b9927126",
-    "9f021871-46df-48b7-9cc7-43abd82d02bd"
+    "9f02187146df48b79cc743abd82d02bd",
+    "b5cbe6201cbf4f408f26c92ce8742f11"
 ];
 
 // Elements UI
@@ -554,28 +555,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })
 
+// =============================================================================
+// FONCTION INSTALLATION JAVA (MODE HARDCORE / SANS DISTRIBUTION)
+// =============================================================================
+
 async function asyncSystemScan(effectiveJavaOptions, launchAfter = true){
+    
+    // --- CONFIGURATION JAVA FORCÉE ---
+    // On s'en fout de la distribution, on met les infos ici en dur.
+    const forceJava = {
+        suggestedMajor: 17,
+        supported: 17,
+        download: {
+            // Ton lien direct vers le ZIP (pas l'exe)
+            url: "https://play.infllexionhost.eu/download/java17.zip",
+            
+            // ⚠️ OBLIGATOIRE : La taille exacte du fichier en octets (Clic droit -> Propriétés)
+            size: 190000000, 
+            
+            // ⚠️ OBLIGATOIRE : Le hash SHA-1 du fichier (utilise un site comme onlinemd5.com)
+            hash: "METTRE_LE_SHA1_ICI"
+        }
+    };
+    // ----------------------------------
+
     setLaunchDetails(Lang.queryJS('landing.systemScan.checking'))
     toggleLaunchArea(true)
     setLaunchPercentage(0)
-    const jvmDetails = await discoverBestJvmInstallation(ConfigManager.getDataDirectory(), effectiveJavaOptions.supported)
+    
+    // On vérifie si Java est déjà là
+    const jvmDetails = await discoverBestJvmInstallation(ConfigManager.getDataDirectory(), forceJava.supported)
+    
     if(jvmDetails == null) {
-        setOverlayContent(Lang.queryJS('landing.systemScan.noCompatibleJava'), Lang.queryJS('landing.systemScan.installJavaMessage', { 'major': effectiveJavaOptions.suggestedMajor }), Lang.queryJS('landing.systemScan.installJava'), Lang.queryJS('landing.systemScan.installJavaManually'))
+        
+        // Popup stylisée pour demander l'installation
+        setOverlayContent(
+            "JAVA REQUIS", 
+            "Composant manquant détecté. Cliquez ci-dessous pour installer les fichiers nécessaires automatiquement.", 
+            "INSTALLER (CLIC ICI)", 
+            "Fermer"
+        )
+        
         setOverlayHandler(() => {
-            setLaunchDetails(Lang.queryJS('landing.systemScan.javaDownloadPrepare'))
+            setLaunchDetails("Téléchargement des composants...")
             toggleOverlay(false)
-            try { downloadJava(effectiveJavaOptions, launchAfter) } catch(err) { showLaunchFailure(Lang.queryJS('landing.systemScan.javaDownloadFailureTitle'), Lang.queryJS('landing.systemScan.javaDownloadFailureText')) }
+            
+            try { 
+                // ON LANCE LE TÉLÉCHARGEMENT AVEC NOS INFOS FORCÉES
+                downloadJava(forceJava, launchAfter) 
+            } catch(err) { 
+                showLaunchFailure("Erreur", "Le téléchargement a échoué.") 
+            }
         })
+        
         setDismissHandler(() => {
-            $('#overlayContent').fadeOut(250, () => {
-                setOverlayContent(Lang.queryJS('landing.systemScan.javaRequired', { 'major': effectiveJavaOptions.suggestedMajor }), Lang.queryJS('landing.systemScan.javaRequiredMessage', { 'major': effectiveJavaOptions.suggestedMajor }), Lang.queryJS('landing.systemScan.javaRequiredDismiss'), Lang.queryJS('landing.systemScan.javaRequiredCancel'))
-                setOverlayHandler(() => { toggleLaunchArea(false); toggleOverlay(false) })
-                setDismissHandler(() => { toggleOverlay(false, true); asyncSystemScan(effectiveJavaOptions, launchAfter) })
-                $('#overlayContent').fadeIn(250)
-            })
+            toggleOverlay(false)
+            toggleLaunchArea(false)
         })
+        
         toggleOverlay(true, true)
+        
     } else {
+        // Java est trouvé, on l'enregistre et on lance le jeu
         const javaExec = javaExecFromRoot(jvmDetails.path)
         ConfigManager.setJavaExecutable(ConfigManager.getSelectedServer(), javaExec)
         ConfigManager.save()
