@@ -556,56 +556,46 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 // =============================================================================
-// FONCTION INSTALLATION JAVA (MODE HARDCORE / SANS DISTRIBUTION)
+// FONCTION INSTALLATION JAVA (MODE EXE ORACLE - NAVIGATEUR)
 // =============================================================================
 
 async function asyncSystemScan(effectiveJavaOptions, launchAfter = true){
     
-    // --- CONFIGURATION JAVA FORCÉE ---
-    // On s'en fout de la distribution, on met les infos ici en dur.
-    const forceJava = {
-        suggestedMajor: 17,
-        supported: 17,
-        download: {
-            // Ton lien direct vers le ZIP (pas l'exe)
-            url: "https://play.infllexionhost.eu/download/java17.zip",
-            
-            // ⚠️ OBLIGATOIRE : La taille exacte du fichier en octets (Clic droit -> Propriétés)
-            size: 190000000, 
-            
-            // ⚠️ OBLIGATOIRE : Le hash SHA-1 du fichier (utilise un site comme onlinemd5.com)
-            hash: "METTRE_LE_SHA1_ICI"
-        }
-    };
-    // ----------------------------------
+    // Le lien officiel Oracle que tu veux utiliser
+    const oracleExeLink = "https://download.oracle.com/java/17/archive/jdk-17.0.12_windows-x64_bin.exe";
 
     setLaunchDetails(Lang.queryJS('landing.systemScan.checking'))
     toggleLaunchArea(true)
     setLaunchPercentage(0)
     
-    // On vérifie si Java est déjà là
-    const jvmDetails = await discoverBestJvmInstallation(ConfigManager.getDataDirectory(), forceJava.supported)
+    // On vérifie si une version compatible (Java 17) est déjà installée
+    const jvmDetails = await discoverBestJvmInstallation(ConfigManager.getDataDirectory(), effectiveJavaOptions.supported)
     
     if(jvmDetails == null) {
         
-        // Popup stylisée pour demander l'installation
+        // Popup stylisée
         setOverlayContent(
             "JAVA REQUIS", 
-            "Composant manquant détecté. Cliquez ci-dessous pour installer les fichiers nécessaires automatiquement.", 
-            "INSTALLER (CLIC ICI)", 
+            "La version requise de Java est introuvable.<br>Cliquez ci-dessous pour télécharger l'installateur officiel Oracle.", 
+            "TÉLÉCHARGER L'INSTALLATEUR", 
             "Fermer"
         )
         
         setOverlayHandler(() => {
-            setLaunchDetails("Téléchargement des composants...")
-            toggleOverlay(false)
+            // ACTION DU BOUTON INSTALLER
+            // 1. Oouvre le lien .exe dans Chrome/Edge/Firefox
+            shell.openExternal(oracleExeLink);
             
-            try { 
-                // ON LANCE LE TÉLÉCHARGEMENT AVEC NOS INFOS FORCÉES
-                downloadJava(forceJava, launchAfter) 
-            } catch(err) { 
-                showLaunchFailure("Erreur", "Le téléchargement a échoué.") 
-            }
+            // 2. Affiche un message pour dire quoi faire
+            setLaunchDetails("Veuillez installer Java puis relancer le launcher...");
+            
+            // 3. Ferme l'overlay
+            toggleOverlay(false);
+
+            // 4. (Optionnel) Ferme le launcher après 5 secondes pour forcer le redémarrage après install
+            setTimeout(() => {
+                remote.app.quit();
+            }, 5000);
         })
         
         setDismissHandler(() => {
@@ -616,7 +606,7 @@ async function asyncSystemScan(effectiveJavaOptions, launchAfter = true){
         toggleOverlay(true, true)
         
     } else {
-        // Java est trouvé, on l'enregistre et on lance le jeu
+        // Si Java est trouvé, on continue normalement
         const javaExec = javaExecFromRoot(jvmDetails.path)
         ConfigManager.setJavaExecutable(ConfigManager.getSelectedServer(), javaExec)
         ConfigManager.save()

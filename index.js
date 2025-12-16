@@ -1,6 +1,6 @@
 const remoteMain = require('@electron/remote/main')
 remoteMain.initialize()
-
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 // Requirements
 const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron')
 const autoUpdater                         = require('electron-updater').autoUpdater
