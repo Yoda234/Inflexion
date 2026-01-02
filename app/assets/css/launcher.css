@@ -2721,3 +2721,16 @@ input:checked + .toggleSwitchSlider:before { transform: translateX(22px); backgr
     0%, 100% { letter-spacing: 4px; opacity: 1; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
     50% { letter-spacing: 8px; opacity: 0.6; text-shadow: 0 0 0 transparent; }
 }
+/* Ajoutez ceci dans launcher.css */
+#frameButton_minimize {
+    color: var(--set-accent); /* Utilise le Cyan du launcher */
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    margin-bottom: 5px;
+}
+
+#frameButton_minimize:hover {
+    background: var(--set-accent);
+    color: black;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+    transform: scale(1.1);
+}
