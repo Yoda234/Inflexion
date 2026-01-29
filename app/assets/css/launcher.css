@@ -2734,3 +2734,127 @@ input:checked + .toggleSwitchSlider:before { transform: translateX(22px); backgr
     box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
     transform: scale(1.1);
 }
+/* Conteneur principal */
+.cyber-skin-manager {
+    background: #0f172a !important;
+    border: 1px solid #1e293b;
+    border-radius: 20px;
+}
+
+/* Titre principal */
+.cyber-main-title {
+    color: #00f3ff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    text-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+}
+
+/* Grille et Cartes */
+.cyber-skin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 25px;
+    padding: 20px;
+}
+
+.skin-file {
+    background: #1e293b !important;
+    border: 1px solid #334155;
+    border-radius: 15px;
+    padding: 20px;
+    position: relative;
+    transition: 0.3s;
+}
+
+/* Bordures néon sur les coins (optionnel via pseudo-éléments) */
+.skin-file::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px; width: 30px; height: 30px;
+    border-top: 2px solid #00f3ff; border-left: 2px solid #00f3ff;
+    border-radius: 15px 0 0 0;
+}
+
+/* Image du skin (Minecraft Body) */
+.skin-img-view {
+    width: 120px !important;
+    height: 160px !important;
+    margin: 10px auto !important;
+    image-rendering: pixelated;
+}
+
+/* Infos sous le skin */
+.skin-title { font-size: 16px; color: #fff; margin-bottom: 5px; }
+.skin-date { font-size: 10px; color: #64748b; margin-top: 5px; }
+.skin-id { font-size: 11px; color: #94a3b8; font-family: monospace; }
+
+/* Bouton Supprimer Rouge */
+.btn-del {
+    background: #ef4444 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 20px !important;
+    padding: 8px 20px !important;
+    width: 100% !important;
+    font-weight: bold !important;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.btn-del:hover { background: #dc2626 !important; transform: scale(1.02); }
+
+.cyber-skin-manager {
+    background: #09090b !important;
+    border: 1px solid #10b981 !important;
+}
+
+.cyber-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    position: relative;
+    transition: 0.3s;
+}
+
+.cyber-card:hover {
+    border-color: #10b981;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    transform: translateY(-5px);
+}
+
+.skin-img-view {
+    width: 100px;
+    height: 140px;
+    margin: 0 auto 15px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    image-rendering: pixelated; /* Garde le skin net */
+}
+
+.skin-url-label {
+    color: #10b981;
+    font-size: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    margin: 5px 0;
+}
+
+.skin-meta { color: #52525b; font-size: 9px; }
+.skin-uuid-tag { font-family: monospace; font-size: 10px; color: #a1a1aa; margin: 5px 0; }
+
+.btn-del-cyber {
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px;
+    width: 100%;
+    font-weight: 800;
+    font-family: 'Rajdhani';
+    cursor: pointer;
+    margin-top: 10px;
+}

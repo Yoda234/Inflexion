@@ -7,19 +7,18 @@ const { validateSelectedJvm, ensureJavaDirIsRoot, javaExecFromRoot, discoverBest
 const DiscordWrapper = require('./assets/js/discordwrapper')
 const ProcessBuilder = require('./assets/js/processbuilder')
 const fs = require('fs')
-const { clipboard} = require('electron')
+const { clipboard } = require('electron')
 
 // --- CONFIGURATION ---
-const NEWS_API_URL = "http://panel.infllexionhost.eu:25568/news.json";
+const NEWS_API_URL = "https://launcher.invergencenetwork.eu/news.json";
 
 // ATTENTION: J'ai remis HTTP ici car ton serveur rejette le HTTPS (Erreur SSL -107).
 // Si tu es CERTAIN que ton serveur supporte le SSL, remets 'https', mais c'est la cause du bug actuel.
-const SKIN_API_ENDPOINT = "htt://play.infllexionhost.eu/api.php"; 
+const SKIN_API_ENDPOINT = "https://launcher.invergencenetwork.eu/list"; 
 
 const ADMIN_UUIDS = [
     "b87a8ce6a5f94ba682e2dce7b9927126",
-    "9f02187146df48b79cc743abd82d02bd",
-    "b5cbe6201cbf4f408f26c92ce8742f11"
+    "9f02187146df48b79cc743abd82d02bd"
 ];
 
 // Elements UI
@@ -107,83 +106,50 @@ function initSkinManager() {
 async function refreshSkinView() {
     const grid = document.getElementById('skinGrid');
     const folderList = document.getElementById('folderList');
-    const msg = document.getElementById('emptySkinMessage');
-    const pathLabel = document.getElementById('currentPathLabel');
     
-    if(!grid) return;
-    grid.innerHTML = '<div style="color:#aaa; width:100%; text-align:center; margin-top:50px;">Chargement...</div>';
+    grid.innerHTML = '<div class="loading-cyber">INITIALISATION...</div>';
 
     try {
-        const url = `${SKIN_API_ENDPOINT}?action=list&uuid=${currentUserTarget}&folder=${currentFolder}&t=${Date.now()}`;
-        const response = await fetch(url);
-        if(!response.ok) throw new Error("Erreur Serveur");
+        const response = await fetch(`${SKIN_API_ENDPOINT}?action=list&uuid=${currentUserTarget}&folder=${currentFolder}&t=${Date.now()}`);
         const data = await response.json();
 
-        // 1. Génération Liste Dossiers (Avec Drop Zone)
-        if(folderList) {
-            let html = `
-                <div class="folder-item ${currentFolder === 'root' ? 'active' : ''}" 
-                     onclick="changeFolder('root')"
-                     ondragover="allowDrop(event)"
-                     ondrop="dropOnFolder(event, 'root')">
-                     📁 Principal
+        // 1. Sidebar des dossiers
+        let folderHtml = `<div class="folder-item ${currentFolder === 'root' ? 'active' : ''}" onclick="changeFolder('root')">📁 Principal</div>`;
+        data.folders.forEach(f => {
+            folderHtml += `
+                <div class="folder-item ${currentFolder === f ? 'active' : ''}">
+                    <span onclick="changeFolder('${f}')">📁 ${f}</span>
+                    <span class="del-folder" onclick="deleteItem(event, '${f}', 'folder')">×</span>
                 </div>`;
-            
-            if(data.folders) {
-                data.folders.forEach(folder => {
-                    html += `
-                        <div class="folder-item ${currentFolder === folder ? 'active' : ''}"
-                             ondragover="allowDrop(event)"
-                             ondrop="dropOnFolder(event, '${folder}')">
-                            <span class="folder-name-span" onclick="changeFolder('${folder}')">📁 ${folder}</span>
-                            <span class="delete-folder-btn" onclick="deleteItem(event, '${folder}', 'folder')">×</span>
-                        </div>`;
-                });
-            }
-            folderList.innerHTML = html;
-        }
+        });
+        folderList.innerHTML = folderHtml;
 
-        // 2. Génération Grille Skins (Avec Drag Source)
+        // 2. Grille des Skins (Style Cyber)
         grid.innerHTML = '';
-        if(!data.skins || data.skins.length === 0) {
-            if(msg) msg.style.display = 'block';
-        } else {
-            if(msg) msg.style.display = 'none';
-            data.skins.forEach(skin => {
-                // IMPORTANT: On utilise l'URL fournie par l'API sans forcer le HTTPS
-                // car cela cause des erreurs ERR_SSL_PROTOCOL_ERROR si le serveur ne suit pas.
-                const rawUrl = skin.url; 
-                
-                const el = document.createElement('div');
-                el.className = 'skin-file';
-                el.setAttribute('draggable', 'true');
-                
-                // Drag Events
-                el.ondragstart = (e) => {
-                    e.dataTransfer.setData("text/plain", skin.name);
-                    e.dataTransfer.effectAllowed = "move";
-                    el.style.opacity = "0.5";
-                };
-                el.ondragend = () => { el.style.opacity = "1"; };
-
-                // Click (Preview)
-                el.onclick = () => selectSkin(rawUrl, skin.name);
-
-                el.innerHTML = `
-                    <div class="skin-img-view" style="background-image: url('${rawUrl}')"></div>
-                    <div class="skin-title">${skin.name}</div>
-                    <div class="skin-actions-row">
-                        <button class="skin-btn btn-copy-small" onclick="copyLinkSmall(event, '${rawUrl}')">COPIER</button>
-                        <button class="skin-btn btn-del" onclick="deleteItem(event, '${skin.name}', 'file')">🗑</button>
-                    </div>`;
-                grid.appendChild(el);
-            });
+        if(data.skins.length === 0) {
+            grid.innerHTML = '<div class="empty-msg">Aucun skin dans ce dossier.</div>';
+            return;
         }
-        if(pathLabel) pathLabel.innerText = currentFolder === 'root' ? '/' : '/' + currentFolder;
+
+        data.skins.forEach(skin => {
+            const shortId = skin.name.split('.')[0].substring(0, 12);
+            const card = document.createElement('div');
+            card.className = 'skin-file cyber-card';
+            card.innerHTML = `
+                <div class="skin-img-view" style="background-image: url('${skin.url}')"></div>
+                <div class="skin-info-block">
+                    <div class="skin-title">${skin.name}</div>
+                    <div class="skin-url-label" onclick="copyLinkSmall(event, '${skin.url}')">URL du Skin</div>
+                    <div class="skin-meta">${skin.date}</div>
+                    <div class="skin-uuid-tag">skid-${shortId}</div>
+                </div>
+                <button class="btn-del-cyber" onclick="deleteItem(event, '${skin.name}', 'file')">Supprimer le skin</button>
+            `;
+            grid.appendChild(card);
+        });
 
     } catch(e) {
-        console.error(e);
-        grid.innerHTML = '<div style="color:#ef4444; text-align:center; margin-top:20px;">Impossible de charger les skins.<br>Vérifiez la connexion API.</div>';
+        grid.innerHTML = '<div class="error-msg">Erreur de liaison API.</div>';
     }
 }
 
@@ -409,12 +375,17 @@ if(launchBtnElement){
             launchBtn.setAttribute('data-original-text', launchBtn.innerHTML)
         }
         launchBtn.innerHTML = '<span>LANCEMENT...</span>'
+        
+        // Timeout de sécurité au cas où le lancement crash sans notifier le launcher
         setTimeout(() => {
-            launchBtn.classList.remove('is-launching')
-            if (launchBtn.getAttribute('data-original-text')) {
-                launchBtn.innerHTML = launchBtn.getAttribute('data-original-text')
+            if (launchBtn.classList.contains('is-launching')) {
+                launchBtn.classList.remove('is-launching')
+                if (launchBtn.getAttribute('data-original-text')) {
+                    launchBtn.innerHTML = launchBtn.getAttribute('data-original-text')
+                }
             }
         }, 30000)
+
         loggerLanding.info('Launching game..')
         try {
             const server = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())
@@ -619,7 +590,7 @@ async function asyncSystemScan(effectiveJavaOptions, launchAfter = true){
 
 // CONFIGURATION UPDATE
 // METTRE ICI L'URL DE TON FICHIER JSON SUR TON SITE WEB
-const UPDATE_JSON_URL = "https://play.infllexionhost.eu/launcher_update.json"; 
+const UPDATE_JSON_URL = "https://launcher.invergencenetwork.eu/launcher_update.json"; 
 
 // Fonction appelée au chargement
 document.addEventListener('DOMContentLoaded', () => {
@@ -762,14 +733,53 @@ async function dlAsync(login = true) {
         }
         try {
             proc = pb.build()
+
+            // On désactive le bouton et on change son aspect visuel pendant le lancement du jeu
+            setLaunchEnabled(false)
+
             proc.stdout.on('data', tempListener)
             proc.stderr.on('data', gameErrorListener)
             setLaunchDetails(Lang.queryJS('landing.dlAsync.doneEnjoyServer'))
+            
             if(distro.rawDistribution.discord != null && serv.rawServer.discord != null){
                 DiscordWrapper.initRPC(distro.rawDistribution.discord, serv.rawServer.discord)
                 hasRPC = true
-                proc.on('close', (code, signal) => { DiscordWrapper.shutdownRPC(); hasRPC = false; proc = null })
             }
-        } catch(err) { showLaunchFailure(Lang.queryJS('landing.dlAsync.errorDuringLaunchTitle'), Lang.queryJS('landing.dlAsync.checkConsoleForDetails')) }
+
+            // --- LOGIQUE DE RÉINITIALISATION DU BOUTON JOUER ---
+            // L'événement 'close' est déclenché dès que la fenêtre Minecraft s'arrête (fermeture normale ou crash)
+            proc.on('close', (code, signal) => {
+                console.log('Processus Minecraft fermé avec le code :', code)
+                
+                // On réinitialise l'aspect visuel immédiat (classe CSS de chargement)
+                const launchBtn = document.getElementById('launch_button')
+                launchBtn.classList.remove('is-launching')
+                
+                // On remet le texte "JOUER" d'origine sauvegardé plus haut
+                if (launchBtn.getAttribute('data-original-text')) {
+                    launchBtn.innerHTML = launchBtn.getAttribute('data-original-text')
+                }
+
+                // On réactive le bouton et on masque la zone de chargement (barre de progression)
+                setLaunchEnabled(true)
+                toggleLaunchArea(false)
+
+                // Arrêt propre de Discord RPC si actif
+                if(hasRPC) {
+                    DiscordWrapper.shutdownRPC()
+                    hasRPC = false
+                }
+                
+                proc = null
+            })
+
+        } catch(err) { 
+            // En cas d'erreur lors de la création du processus Java
+            const launchBtn = document.getElementById('launch_button')
+            launchBtn.classList.remove('is-launching')
+            setLaunchEnabled(true)
+            toggleLaunchArea(false)
+            showLaunchFailure(Lang.queryJS('landing.dlAsync.errorDuringLaunchTitle'), Lang.queryJS('landing.dlAsync.checkConsoleForDetails')) 
+        }
     }
 }

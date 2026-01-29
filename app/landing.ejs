@@ -161,55 +161,26 @@
             </div>
         </div>
         <div id="skinOverlay" style="display: none;">
-            <div class="skin-manager-box">
+            <div class="skin-manager-box cyber-skin-manager">
                 <div class="skin-manager-header">
-                    <div class="header-left">
-                        <span class="manager-title">MES SKINS</span>
-                    </div>
-                    <div class="header-right">
-                        <div id="adminSkinSearch" style="display:none;">
-                            <input type="text" id="adminSearchInput" placeholder="UUID Joueur...">
-                            <button id="adminSearchBtn">VOIR</button>
-                        </div>
-                        <button id="closeSkinBtn" class="close-btn">×</button>
-                    </div>
+                    <h1 class="cyber-main-title">GESTIONNAIRE DE SKINS</h1>
+                    <button id="closeSkinBtn" class="close-btn">×</button>
                 </div>
 
                 <div class="skin-manager-body">
                     <div class="skin-sidebar">
+                        <button id="uploadSkinBtn" class="cyber-import-btn">Importer un Skin (PNG)</button>
                         <div class="sidebar-header">
-                            <span>DOSSIERS</span>
-                            <button id="createFolderBtn" title="Nouveau Dossier">+</button>
+                            <span class="cyber-folder-title">📁 DOSSIERS</span>
+                            <button id="createFolderBtn">+</button>
                         </div>
-                        <div id="folderList">
-                            </div>
+                        <div id="folderList"></div>
                     </div>
 
-                    <div class="skin-content-area" id="skinDropZone">
-                        <div id="skinPreviewHeader" style="display:none;">
-                            <div class="preview-left">
-                                <img id="previewImageBig" src="" alt="Aperçu">
+                    <div class="skin-content-area">
+                        <div class="path-bar">/</div>
+                        <div id="skinGrid" class="cyber-skin-grid">
                             </div>
-                            <div class="preview-right">
-                                <h3 id="previewName">Nom du Skin</h3>
-                                <p id="previewDimensions">Résolution: ...</p>
-                                <div class="preview-actions">
-                                    <input type="text" id="previewUrlInput" readonly>
-                                    <button id="previewCopyBtn">COPIER LE LIEN</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="content-actions">
-                            <button id="uploadSkinBtn" class="action-btn">Importer un Skin (PNG)</button>
-                            <span id="currentPathLabel">/</span>
-                        </div>
-                        
-                        <div id="skinGrid" class="skin-grid-view">
-                            </div>
-
-                        <div id="emptySkinMessage" style="display:none; text-align:center; color:#555; margin-top:50px;">
-                            Dossier vide. Glissez-déposez un fichier ici.
-                        </div>
                     </div>
                 </div>
             </div>

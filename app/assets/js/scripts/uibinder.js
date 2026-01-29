@@ -63,6 +63,8 @@ function getCurrentView(){
 /**
  * Fonction de mise à jour de l'interface serveur (Ajout correctif)
  */
+ 
+
 function updateSelectedServer(serv){
     if(getCurrentView() === VIEWS.landing){
         const titleEl = document.getElementById('invergenceTitle');
@@ -149,22 +151,22 @@ async function showMainUI(data){
     })
 }
 
-function showFatalStartupError(){
+function showFatalStartupError(title, message) {
     setTimeout(() => {
         $('#loadingContainer').fadeOut(250, () => {
-            document.getElementById('overlayContainer').style.background = 'none'
+            document.getElementById('overlayContainer').style.background = 'none';
             setOverlayContent(
-                Lang.queryJS('uibinder.startup.fatalErrorTitle'),
-                Lang.queryJS('uibinder.startup.fatalErrorMessage'),
+                title || Lang.queryJS('uibinder.startup.fatalErrorTitle'),
+                message || Lang.queryJS('uibinder.startup.fatalErrorMessage'),
                 Lang.queryJS('uibinder.startup.closeButton')
-            )
+            );
             setOverlayHandler(() => {
-                const window = remote.getCurrentWindow()
-                window.close()
-            })
-            toggleOverlay(true)
-        })
-    }, 750)
+                const window = remote.getCurrentWindow();
+                window.close();
+            });
+            toggleOverlay(true);
+        });
+    }, 750);
 }
 
 /**
@@ -179,6 +181,7 @@ function onDistroRefresh(data){
     syncModConfigurations(data)
     ensureJavaSettings(data)
 }
+
 
 /**
  * Sync the mod configurations with the distro index.
@@ -476,25 +479,50 @@ document.addEventListener('readystatechange', async () => {
 }, false)
 
 // Actions that must be performed after the distribution index is downloaded.
+// URL vers votre fichier de blacklist distant
+const BLACKLIST_URL = "https://launcher.invergencenetwork.eu/blacklist.txt";
+
 ipcRenderer.on('distributionIndexDone', async (event, res) => {
     if(res) {
-        const data = await DistroAPI.getDistribution()
-        syncModConfigurations(data)
-        ensureJavaSettings(data)
+        // --- VÉRIFICATION DE LA BLACKLIST ---
+        try {
+            // 1. Récupérer l'IP de l'utilisateur
+            const ipResponse = await fetch('https://api.ipify.org?format=json');
+            const { ip } = await ipResponse.json();
+
+            // 2. Récupérer la liste des bannis
+            const blacklistResp = await fetch(`${BLACKLIST_URL}?t=${Date.now()}`);
+            const blacklistText = await blacklistResp.text();
+            const bannedIps = blacklistText.split('\n').map(s => s.trim());
+
+            // 3. Comparer
+            if (bannedIps.includes(ip)) {
+                fatalStartupError = true;
+                showFatalStartupError("ACCÈS RÉSEAU BLOQUÉ", "Votre adresse IP a été bannie de nos services.");
+                return;
+            }
+        } catch (e) {
+            console.error("Erreur lors de la vérification de sécurité", e);
+            // En cas d'erreur de fetch, on laisse passer pour éviter de bloquer tout le monde
+        }
+
+        const data = await DistroAPI.getDistribution();
+        syncModConfigurations(data);
+        ensureJavaSettings(data);
         if(document.readyState === 'interactive' || document.readyState === 'complete'){
-            await showMainUI(data)
+            await showMainUI(data);
         } else {
-            rscShouldLoad = true
+            rscShouldLoad = true;
         }
     } else {
-        fatalStartupError = true
+        fatalStartupError = true;
         if(document.readyState === 'interactive' || document.readyState === 'complete'){
-            showFatalStartupError()
+            showFatalStartupError();
         } else {
-            rscShouldLoad = true
+            rscShouldLoad = true;
         }
     }
-})
+});
 
 // Util for development
 async function devModeToggle() {
